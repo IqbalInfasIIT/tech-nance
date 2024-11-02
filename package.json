@@ -2,18 +2,14 @@
   "name": "techNance",
   "version": "1.0.0",
   "scripts": {
+    "setup": "setup-all.bat",
     "start-predictions": "cd predictions && venv\\Scripts\\activate && python app.py",
     "start-backend": "cd backend && node index.js",
     "start-frontend": "cd frontend && npm start",
-    "start-all": "concurrently --kill-others --names \"FLASK,NODE,REACT\" --prefix-colors \"bgBlue.bold,bgGreen.bold,bgMagenta.bold\" \"npm run start-predictions\" \"npm run start-backend\" \"npm run start-frontend\""
+    "start-all": "concurrently --kill-others --names \"FLASK,NODE,REACT\" --prefix-colors \"bgBlue.bold,bgGreen.bold\" \"npm run start-predictions\" \"npm run start-backend\" \"npm run start-frontend\""
   },
   "devDependencies": {
     "concurrently": "^9.0.1"
-  },
-  "dependencies": {
-    "axios": "^0.21.1",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "sqlite3": "^5.0.0"
   }
 }
+
