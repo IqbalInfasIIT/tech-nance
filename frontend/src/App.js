@@ -28,10 +28,9 @@ function Sidebar() {
   const [selected, setSelected] = useState('');
 
   useEffect(() => {
-    // Update selected state based on current URL
     if (location.pathname.includes('reports')) setSelected('reports');
     else if (location.pathname.includes('budgets')) setSelected('budgets');
-    else setSelected('accounts'); // Default to accounts if URL doesn't match other paths
+    else setSelected('accounts');
   }, [location.pathname]);
 
   return (

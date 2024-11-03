@@ -13,11 +13,9 @@ function Reports() {
     const fetchTransactions = async () => {
       try {
         const totalsResponse = await axios.get('http://localhost:3001/totals');
-        console.log('Totals:', totalsResponse.data);  // Log for debugging
         setTotals(totalsResponse.data);
 
         const sortedTransactionsResponse = await axios.get('http://localhost:3001/sorted-transactions');
-        console.log('Sorted Transactions:', sortedTransactionsResponse.data);  // Log for debugging
         setTransactions(sortedTransactionsResponse.data);
       } catch (error) {
         console.error('Error fetching transactions:', error);

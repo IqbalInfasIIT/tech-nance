@@ -1,7 +1,6 @@
 const db = require('../database/db');
 const axios = require('axios');
 
-// 1. Add a transaction to the DB
 exports.addTransaction = (req, res) => {
   const { amount, category } = req.body;
   db.run('INSERT INTO transactions (amount, category) VALUES (?, ?)', [amount, category], function(err) {
@@ -12,7 +11,6 @@ exports.addTransaction = (req, res) => {
   });
 };
 
-// 2. Retrieve totals and categories for pie chart and totals table
 exports.getTotals = (req, res) => {
   db.all('SELECT category, SUM(amount) as total FROM transactions GROUP BY category', (err, rows) => {
     if (err) {
@@ -28,7 +26,6 @@ exports.getTotals = (req, res) => {
   });
 };
 
-// 3. Retrieve all transactions
 exports.getAllTransactions = (req, res) => {
   db.all('SELECT * FROM transactions', (err, rows) => {
     if (err) {
@@ -38,7 +35,6 @@ exports.getAllTransactions = (req, res) => {
   });
 };
 
-// 4. Retrieve all transactions and send to Flask for sorting
 exports.getSortedTransactions = async (req, res) => {
   db.all('SELECT * FROM transactions', async (err, rows) => {
     if (err) {

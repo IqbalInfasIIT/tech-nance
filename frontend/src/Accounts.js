@@ -6,16 +6,14 @@ function Accounts() {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
 
-  // Function to handle amount input with formatting
   const handleAmountChange = (e) => {
-    const value = e.target.value.replace(/,/g, ''); // Remove existing commas
+    const value = e.target.value.replace(/,/g, '');
     if (!isNaN(value)) {
       const formattedValue = new Intl.NumberFormat().format(value);
       setAmount(formattedValue);
     }
   };
 
-  // Function to add a new transaction
   const addTransaction = async () => {
     const newTransaction = { amount: parseFloat(amount.replace(/,/g, '')), category };
     try {
@@ -25,7 +23,6 @@ function Accounts() {
     }
   };
 
-  // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     addTransaction();
