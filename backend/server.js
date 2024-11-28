@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const transactionRoutes = require('./routes/transactionRoutes');
+const accountRoutes = require('./routes/accountRoutes');
 const app = express();
 const port = 3001;
 
@@ -11,7 +12,9 @@ app.get('/', (req, res) => {
   res.send('Welcome to the backend server!');
 });
 
-app.use('/', transactionRoutes);
+// Use specific base paths for routes
+app.use('/transactions', transactionRoutes);
+app.use('/accounts', accountRoutes);
 
 app.listen(port, () => {
   console.log(`Backend running at http://localhost:${port}`);

@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react';
+//App.js
+
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
 import './App.css';
-import Reports from './Reports';
-import Accounts from './Accounts';
-import Budgets from './Budgets';
+import Reports from './Reports/Reports';
+import Accounts from './Accounts/Accounts';
+import Budgets from './Budgets/Budgets';
+import AddAccount from './Accounts/AddAccount';
+import Transactions from './Accounts/Transactions/Transactions';
 
 function App() {
   return (
@@ -14,6 +18,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Accounts />} />
             <Route path="/accounts" element={<Accounts />} />
+            <Route path="/add-account" element={<AddAccount />} />
+            <Route path="/transactions/:accountId" element={<Transactions />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/budgets" element={<Budgets />} />
           </Routes>
