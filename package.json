@@ -7,13 +7,15 @@
     "setup-backend": "cd backend && npm install",
     "setup-predictions": "cd predictions && python -m venv venv && venv\\Scripts\\activate && pip install flask pandas",
     "setup-all": "npm run setup-root && npm run setup-frontend && npm run setup-backend && npm run setup-predictions",
-    
     "start-predictions": "cd predictions && venv\\Scripts\\activate && python app.py",
-    "start-backend": "cd backend && node index.js",
+    "start-backend": "cd backend && node server.js",
     "start-frontend": "cd frontend && npm start",
     "start-all": "concurrently --kill-others --names \"FLASK,NODE,REACT\" --prefix-colors \"bgBlue.bold,bgGreen.bold\" \"npm run start-predictions\" \"npm run start-backend\" \"npm run start-frontend\""
   },
   "devDependencies": {
     "concurrently": "^9.0.1"
+  },
+  "dependencies": {
+    "mysql2": "^3.11.4"
   }
 }

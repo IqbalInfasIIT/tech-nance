@@ -1,0 +1,46 @@
+.chart-totals {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .chart-container {
+    flex-grow: 1;
+  }
+  
+  .totals-list {
+    list-style-type: none;
+    padding: 0;
+    margin-left: 20px;
+  }
+  
+  .totals-list li {
+    margin-bottom: 10px;
+  }
+  
+  .recharts-surface {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .recharts-wrapper {
+    margin: 0 auto;
+  }
+  
+  .recharts-text {
+    fill: #333;
+    font-size: 14px;
+  }
+  
+  .recharts-tooltip-wrapper {
+    font-size: 12px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+  }
+  
+  .recharts-legend-item {
+    font-size: 12px;
+  }
+  
