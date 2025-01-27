@@ -47,7 +47,7 @@
 }
 
 .full-width {
-  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .add-transaction-button {
@@ -59,6 +59,10 @@
   cursor: pointer;
   transition: background-color 0.3s;
   text-align: center;
+  width: 100%;
+}
+
+.add-transaction-button{
   width: 100%;
 }
 
@@ -76,9 +80,13 @@
   color: white;
 }
 
+.spanwid{
+  grid-column: 1 / -1;
+}
+
 .transaction-form .error {
   color: red;
-  grid-column: 1 / -1;
+
 }
 
 .type-selection {

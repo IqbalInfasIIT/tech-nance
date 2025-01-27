@@ -1,0 +1,23 @@
+.type-selection {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.type-selection button {
+  padding: 10px 20px;
+  background-color: #00aaff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.type-selection button.active {
+  background-color: #00008b;
+}
+
+.type-selection button:hover {
+  background-color: #000000;
+}

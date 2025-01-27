@@ -5,12 +5,12 @@ function AmountInput({ amount, setAmount, error, setError }) {
     const value = e.target.value;
     const numberValue = Number(value.replace(/,/g, ''));
 
-    if (Number.isInteger(numberValue) && numberValue > 0) {
+    if (numberValue > 0) {
       setError('');
       const formattedValue = new Intl.NumberFormat().format(numberValue);
       setAmount(formattedValue);
     } else {
-      setError('Please enter a positive integer amount.');
+      setError('Please enter a positive amount.');
     }
   };
 

@@ -1,97 +1,101 @@
-//transactionController.js
-
 const db = require('../database/db');
-const axios = require('axios');
+const Transaction = require('../models/Transaction');
+const TransactionService = require('../services/transactionService');
+const Source = require('../models/Source'); // Import Source model
 
-exports.addTransaction = (req, res) => {
-  const { date, number, description, type, amount, fromAccount, toAccountOrCategory } = req.body;
-  let query = '';
-  let params = [];
+const transactionModel = new Transaction(db);
+const transactionService = new TransactionService(transactionModel);
+const sourceModel = new Source(db); // Create an instance of Source model
 
-  if (type === 'transfer') {
-    query = 'INSERT INTO transactions (date, number, description, type, amount, from_account_id, to_account_or_category) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    params = [date, number, description, type, amount, fromAccount, toAccountOrCategory];
-  } else if (type === 'income' || type === 'expense' || type === 'refund') {
-    query = 'INSERT INTO transactions (date, number, description, type, amount, from_account_id, to_account_or_category) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    params = [date, number, description, type, amount, fromAccount, toAccountOrCategory];
+exports.getAllTransactions = async (req, res) => {
+  try {
+    const [results] = await transactionService.getAllTransactions();
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching transactions:', err);
+    res.status(500).send('Error fetching transactions');
   }
-
-  db.query(query, params, (err, results) => {
-    if (err) {
-      return res.status(500).send('Error saving transaction');
-    }
-    res.status(200).send('Transaction added successfully');
-  });
 };
 
-exports.getIncomeCategories = (req, res) => {
-  db.query('SELECT * FROM income_categories', (err, results) => {
-    if (err) {
-      return res.status(500).send('Error retrieving income categories');
+exports.addTransaction = async (req, res) => {
+  try {
+    const transaction = req.body;
+    console.log('Received transaction:', transaction);
+
+    const defaultValues = {
+      date: new Date().toISOString().split('T')[0],
+      number: 'N/A',
+      description: 'No description provided',
+      type: 'income',
+      amount: '0.00',
+      sourceId: '0',
+      sourceType: 'source',
+      destinationId: null,
+      destinationType: null,
+      paymentMethod: 'Cash'
+    };
+
+    // Merge transaction with default values
+    const finalTransaction = { ...defaultValues, ...transaction };
+
+    console.log('Final transaction with defaults:', finalTransaction);
+
+    // Add the transaction
+    await transactionService.addTransaction(finalTransaction);
+
+    // Update balances based on the transaction type
+    switch (finalTransaction.type) {
+      case 'transfer':
+        await sourceModel.decrementBalance(finalTransaction.sourceId, finalTransaction.amount);
+        await sourceModel.incrementBalance(finalTransaction.destinationId, finalTransaction.amount);
+        break;
+      case 'income':
+        await sourceModel.incrementBalance(finalTransaction.sourceId, finalTransaction.amount);
+        break;
+      case 'expense':
+        await sourceModel.decrementBalance(finalTransaction.sourceId, finalTransaction.amount);
+        break;
+      case 'refund':
+        await sourceModel.incrementBalance(finalTransaction.sourceId, finalTransaction.amount);
+        break;
+      case 'topup':
+        await sourceModel.decrementBalance(finalTransaction.sourceId, finalTransaction.amount);
+        await sourceModel.incrementBalance(finalTransaction.destinationId, finalTransaction.amount);
+        break;
+      case 'settle':
+        await sourceModel.decrementBalance(finalTransaction.sourceId, finalTransaction.amount);
+        await sourceModel.incrementBalance(finalTransaction.destinationId, finalTransaction.amount);
+        break;
+      default:
+        break;
     }
-    res.json(results);
-  });
+    console.log('half')
+    res.status(201).json({ message: 'Transaction added successfully!' });
+  } catch (err) {
+    console.error('Error adding transaction:', err);
+    res.status(500).json({ message: 'Error adding transaction' });
+  }
+  console.log('complete')
 };
 
-exports.getExpenseCategories = (req, res) => {
-  db.query('SELECT * FROM expense_categories', (err, results) => {
-    if (err) {
-      return res.status(500).send('Error retrieving expense categories');
-    }
-    res.json(results);
-  });
+exports.getTransactionById = async (req, res) => {
+  try {
+    const transactionId = req.params.transactionId;
+    const [results] = await transactionService.getTransactionById(transactionId);
+    res.json(results[0]);
+  } catch (err) {
+    console.error('Error fetching transaction details:', err);
+    res.status(500).send('Error fetching transaction details');
+  }
 };
 
-
-exports.getTotals = (req, res) => {
-  const accountId = req.params.accountId;
-  const query = accountId
-    ? 'SELECT category, SUM(amount) as total FROM transactions WHERE account_id = ? GROUP BY category'
-    : 'SELECT category, SUM(amount) as total FROM transactions GROUP BY category';
-  const params = accountId ? [accountId] : [];
-  db.query(query, params, (err, results) => {
-    if (err) {
-      return res.status(500).send('Error retrieving totals');
-    }
-    const totals = { rent: 0, food: 0, travel: 0, personal: 0 };
-    results.forEach(row => {
-      if (totals.hasOwnProperty(row.category)) {
-        totals[row.category] = row.total ? parseFloat(row.total) : 0;
-      }
-    });
-    res.json(totals);
-  });
-};
-
-exports.getAllTransactions = (req, res) => {
-  const accountId = req.params.accountId;
-  const query = accountId
-    ? 'SELECT * FROM transactions WHERE account_id = ?'
-    : 'SELECT * FROM transactions';
-  const params = accountId ? [accountId] : [];
-  db.query(query, params, (err, results) => {
-    if (err) {
-      return res.status(500).send('Error retrieving transactions');
-    }
-    res.json(results);
-  });
-};
-
-exports.getSortedTransactions = async (req, res) => {
-  const accountId = req.params.accountId;
-  const query = accountId
-    ? 'SELECT * FROM transactions WHERE account_id = ?'
-    : 'SELECT * FROM transactions';
-  const params = accountId ? [accountId] : [];
-  db.query(query, params, async (err, results) => {
-    if (err) {
-      return res.status(500).send('Error retrieving transactions');
-    }
-    try {
-      const response = await axios.post('http://localhost:5000/sort', results);
-      res.json(response.data);
-    } catch (error) {
-      res.status(500).send('Error processing transaction');
-    }
-  });
+exports.deleteTransaction = async (req, res) => {
+  try {
+    const transactionId = req.params.transactionId;
+    await transactionService.deleteTransaction(transactionId);
+    res.send('Transaction deleted successfully');
+  } catch (err) {
+    console.error('Error deleting transaction:', err);
+    res.status(500).send('Error deleting transaction');
+  }
 };

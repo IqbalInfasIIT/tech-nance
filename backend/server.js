@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
+const sourceRoutes = require('./routes/sourceRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
-const accountRoutes = require('./routes/accountRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+
 const app = express();
 const port = 3001;
 
@@ -12,9 +14,14 @@ app.get('/', (req, res) => {
   res.send('Welcome to the backend server!');
 });
 
-// Use specific base paths for routes
+app.use('/sources', sourceRoutes);
 app.use('/transactions', transactionRoutes);
-app.use('/accounts', accountRoutes);
+app.use('/categories', categoryRoutes);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 app.listen(port, () => {
   console.log(`Backend running at http://localhost:${port}`);

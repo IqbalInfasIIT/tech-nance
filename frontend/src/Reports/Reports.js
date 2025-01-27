@@ -16,7 +16,7 @@ function Reports() {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/get-accounts');
+        const response = await axios.get('http://localhost:3001/accounts/get-accounts');
         setAccounts(response.data);
       } catch (error) {
         console.error('Error fetching accounts:', error);
@@ -28,10 +28,10 @@ function Reports() {
 
   const fetchAllData = async () => {
     try {
-      const totalsResponse = await axios.get('http://localhost:3001/totals');
+      const totalsResponse = await axios.get('http://localhost:3001/transactions/totals');
       setTotals(totalsResponse.data);
 
-      const transactionsResponse = await axios.get('http://localhost:3001/sorted-transactions');
+      const transactionsResponse = await axios.get('http://localhost:3001/transactions/sorted-transactions');
       setTransactions(transactionsResponse.data);
     } catch (error) {
       console.error('Error fetching all data:', error);
@@ -40,10 +40,10 @@ function Reports() {
 
   const fetchAccountData = async (accountId) => {
     try {
-      const totalsResponse = await axios.get(`http://localhost:3001/totals/${accountId}`);
+      const totalsResponse = await axios.get(`http://localhost:3001/transactions/totals/${accountId}`);
       setTotals(totalsResponse.data);
 
-      const transactionsResponse = await axios.get(`http://localhost:3001/sorted-transactions/${accountId}`);
+      const transactionsResponse = await axios.get(`http://localhost:3001/transactions/sorted-transactions/${accountId}`);
       setTransactions(transactionsResponse.data.length ? transactionsResponse.data : []);
       setSelectedAccountId(accountId);
     } catch (error) {

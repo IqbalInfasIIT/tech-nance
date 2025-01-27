@@ -1,13 +1,12 @@
-//App.js
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
 import './App.css';
+
+import SourcesScreen from './Sources/SourcesScreen';
+import AddSourceScreen from './Sources/AddSourceScreen';
+import TransactionsScreen from './Sources/Transactions/TransactionsScreen';
 import Reports from './Reports/Reports';
-import Accounts from './Accounts/Accounts';
 import Budgets from './Budgets/Budgets';
-import AddAccount from './Accounts/AddAccount';
-import Transactions from './Accounts/Transactions/Transactions';
 
 function App() {
   return (
@@ -16,10 +15,10 @@ function App() {
         <Sidebar />
         <div className="content">
           <Routes>
-            <Route path="/" element={<Accounts />} />
-            <Route path="/accounts" element={<Accounts />} />
-            <Route path="/add-account" element={<AddAccount />} />
-            <Route path="/transactions/:accountId" element={<Transactions />} />
+            <Route path="/" element={<SourcesScreen />} />
+            <Route path="/sources" element={<SourcesScreen />} />
+            <Route path="/add-source/:type" element={<AddSourceScreen />} />
+            <Route path="/transactions/:sourceId" element={<TransactionsScreen />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/budgets" element={<Budgets />} />
           </Routes>
@@ -29,6 +28,7 @@ function App() {
   );
 }
 
+
 function Sidebar() {
   const location = useLocation();
   const [selected, setSelected] = useState('');
@@ -36,14 +36,14 @@ function Sidebar() {
   useEffect(() => {
     if (location.pathname.includes('reports')) setSelected('reports');
     else if (location.pathname.includes('budgets')) setSelected('budgets');
-    else setSelected('accounts');
+    else setSelected('sources');
   }, [location.pathname]);
 
   return (
     <div className="sidebar">
       <ul>
-        <li className={selected === 'accounts' ? 'active' : ''}>
-          <Link to="/accounts" onClick={() => setSelected('accounts')}>Accounts</Link>
+        <li className={selected === 'sources' ? 'active' : ''}>
+          <Link to="/sources" onClick={() => setSelected('sources')}>Sources</Link>
         </li>
         <li className={selected === 'reports' ? 'active' : ''}>
           <Link to="/reports" onClick={() => setSelected('reports')}>Reports</Link>

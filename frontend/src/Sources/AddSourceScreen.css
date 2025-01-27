@@ -1,0 +1,50 @@
+.add-source-container {
+  margin: 2vh;
+}
+
+.add-source-container h2 {
+  text-align: center;
+  font-size: 3vh;
+}
+
+.add-source-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2vh; /* Added more gap for better spacing */
+}
+
+.add-source-form input, .add-source-form button, .add-source-form select {
+  width: 80%;
+  padding: 1.5vh;
+  margin-bottom: 1.5vh;
+  border: 0.1vh solid #ccc;
+  border-radius: 0.5vh;
+  font-size: 1.5vh; /* Adjusted font size */
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.add-source-form label {
+  margin-right: 2vh;
+  font-size: 1.5vh;
+}
+
+.add-source-form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: auto;
+  height: auto;
+  font-size: 1.5vh; /* Adjusted font size */
+  padding: 1.5vh 3vh; /* Adjusted padding */
+}
+
+.add-source-form button:hover {
+  background-color: #0056b3;
+}
+
+.select-radio{
+  display: flex;
+}

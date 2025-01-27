@@ -1,0 +1,206 @@
+-- Drop the existing database if it exists
+DROP DATABASE IF EXISTS techNanceDB;
+------------------------------------------------------------------------------------------------------------------------------------------
+-- Create the new database
+CREATE DATABASE techNanceDB;
+------------------------------------------------------------------------------------------------------------------------------------------
+-- Use the newly created database
+USE techNanceDB;
+------------------------------------------------------------------------------------------------------------------------------------------
+-- Create capital_sources table
+CREATE TABLE capital_sources (
+    source_id INT AUTO_INCREMENT PRIMARY KEY,
+    source_type ENUM('Account', 'Card', 'Digital', 'Gift') NOT NULL,
+    source_name VARCHAR(255) NOT NULL UNIQUE,
+    balance DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    linked_account_id INT DEFAULT NULL,
+    is_bank_account BOOLEAN DEFAULT FALSE,
+    credit_limit DECIMAL(10, 2) DEFAULT NULL,
+    cycle_end_date DATE DEFAULT NULL,
+    isActive BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (linked_account_id) REFERENCES capital_sources(source_id)
+);
+------------------------------------------------------------------------------------------------------------------------------------------
+-- Create income categories table
+CREATE TABLE IF NOT EXISTS income_categories (
+  category_id INT AUTO_INCREMENT PRIMARY KEY,
+  category_name VARCHAR(255) NOT NULL,
+  parent_category_id INT DEFAULT NULL,
+  FOREIGN KEY (parent_category_id) REFERENCES income_categories(category_id)
+);
+------------------------------------------------------------------------------------------------------------------------------------------
+-- Create expense categories table
+CREATE TABLE IF NOT EXISTS expense_categories (
+  category_id INT AUTO_INCREMENT PRIMARY KEY,    category_name VARCHAR(255) NOT NULL,
+  parent_category_id INT DEFAULT NULL,
+  FOREIGN KEY (parent_category_id) REFERENCES expense_categories(category_id)
+);
+------------------------------------------------------------------------------------------------------------------------------------------
+-- Create transactions table
+CREATE TABLE IF NOT EXISTS transactions (
+  transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+  date DATE NOT NULL,
+  number VARCHAR(255) NOT NULL,
+  description VARCHAR(255) NOT NULL,
+  type ENUM('transfer', 'income', 'expense', 'refund', 'topup', 'settle') NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  source_id INT NOT NULL,
+  source_type ENUM('source', 'income_category', 'expense_category') NOT NULL,
+  destination_id INT DEFAULT NULL,
+  destination_type ENUM('source', 'income_category', 'expense_category') DEFAULT NULL,
+  payment_method ENUM('Transfer', 'Cash', 'Debit', 'Credit', 'Digital', 'Voucher') DEFAULT NULL
+);
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------
+-- Insert the bank accounts
+INSERT INTO capital_sources (source_type, source_name, balance, is_bank_account, isActive) VALUES
+('Account', 'Savings Account', 5000.00, TRUE, TRUE),
+('Account', 'Spending Account', 1500.00, TRUE, TRUE),
+('Account', 'Cash Account', 200.00, FALSE, TRUE);
+
+-- Insert the cards
+INSERT INTO capital_sources (source_type, source_name, balance, linked_account_id, credit_limit, cycle_end_date, is_bank_account, isActive) VALUES
+('Card', 'Debit Card', 1000.00, 2, NULL, NULL, FALSE, TRUE),
+('Card', 'Credit Card', 0, NULL, 3000.00, '2025-12-31', FALSE, TRUE);
+
+-- Insert the digital wallets
+INSERT INTO capital_sources (source_type, source_name, balance, linked_account_id, is_bank_account, isActive) VALUES
+('Digital', 'PayPal', 0, 2, FALSE, TRUE),
+('Digital', 'Google Pay', 0, 1, FALSE, TRUE);
+
+-- Insert the voucher
+INSERT INTO capital_sources (source_type, source_name, balance, is_bank_account, isActive) VALUES
+('Gift', 'Voucher', 50.00, FALSE, TRUE);
+
+------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------
+
+INSERT INTO income_categories (category_id, category_name, parent_category_id) VALUES
+-- Main Categories
+(1, 'Salary', NULL),
+(2, 'Investments', NULL),
+(3, 'Gifts', NULL),
+(4, 'Business Income', NULL),
+(5, 'Rental Income', NULL),
+(6, 'Miscellaneous Income', NULL),
+
+-- Subcategories for 'Salary'
+(7, 'Basic Salary', 1),
+(8, 'Freelance', 1),
+-- Sub-subcategories for 'Freelance'
+(9, 'Project A', 8),
+(10, 'Project B', 8),
+(11, 'Client X', 8),
+(12, 'Client Y', 8),
+(13, 'Pension', 1),
+
+-- Subcategories for 'Investments'
+(14, 'Dividends', 2),
+(15, 'Stock Sales', 2),
+(16, 'Royalties', 2),
+
+-- Subcategories for 'Gifts'
+(17, 'Birthday Gifts', 3),
+(18, 'Holiday Gifts', 3),
+(19, 'Occasional Gifts', 3),
+(20, 'Grants and Awards', 3),
+
+-- Subcategories for 'Business Income'
+(21, 'Product Sales', 4),
+(22, 'Service Revenue', 4),
+(23, 'Consultancy Fees', 4),
+
+-- Subcategories for 'Rental Income'
+(24, 'Property Rental', 5),
+(25, 'Equipment Rental', 5),
+
+-- Subcategories for 'Miscellaneous Income'
+(26, 'Interest from Savings', 6),
+(27, 'Fixed Deposits', 6),
+(28, 'Other Income Sources', 6);
+
+-- Insert expense categories with three tiers
+INSERT INTO expense_categories (category_id, category_name, parent_category_id) VALUES
+-- Main Categories
+(1, 'Housing and Rent', NULL),
+(2, 'Transport', NULL),
+(3, 'Personal', NULL),
+(4, 'Entertainment', NULL),
+(5, 'Healthcare', NULL),
+(6, 'Education', NULL),
+(7, 'Investments', NULL),
+(8, 'Taxes', NULL),
+(9, 'Debt Repayment', NULL),
+(10, 'Savings Contributions', NULL),
+(11, 'Miscellaneous', NULL),
+
+-- Subcategories for 'Housing and Rent'
+(12, 'Rent', 1),
+(13, 'Repairs', 1),
+(14, 'Utilities', 1),
+(15, 'Home Insurance', 1),
+
+-- Subcategories for 'Transport'
+(16, 'Commute', 2),
+(17, 'Taxi', 2),
+(18, 'Vehicle Maintenance', 2),
+(19, 'Fuel', 2),
+(20, 'Vehicle Insurance', 2),
+
+-- Subcategories for 'Personal'
+(21, 'Health', 3),
+(22, 'Clothing', 3),
+(23, 'Beauty', 3),
+(24, 'Gifts', 3),
+(25, 'Childcare', 3),
+(26, 'Pet Care', 3),
+(27, 'Subscriptions', 3),
+(28, 'Life Insurance', 3),
+
+-- Subcategories for 'Entertainment'
+(29, 'Movies', 4),
+(30, 'Events', 4),
+(31, 'Hobbies', 4),
+(32, 'Subscriptions', 4),
+
+-- Subcategories for 'Healthcare'
+(33, 'Doctor Visits', 5),
+(34, 'Medications', 5),
+(35, 'Dental', 5),
+(36, 'Vision', 5),
+(37, 'Health Insurance', 5),
+
+-- Subcategories for 'Education'
+(38, 'School Fees', 6),
+(39, 'Books', 6),
+(40, 'Online Courses', 6),
+(41, 'Workshops', 6),
+
+-- Subcategories for 'Investments'
+(42, 'Stocks', 7),
+(43, 'Bonds', 7),
+(44, 'Real Estate Investments', 7),
+(45, 'Other Investments', 7),
+
+-- Subcategories for 'Taxes'
+(46, 'Income Tax', 8),
+(47, 'Property Tax', 8),
+(48, 'Other Taxes', 8),
+
+-- Subcategories for 'Debt Repayment'
+(49, 'Loan Repayments', 9),
+(50, 'Credit Card Payments', 9),
+(51, 'Other Debt Payments', 9),
+
+-- Subcategories for 'Savings Contributions'
+(52, 'Savings Account Contributions', 10),
+(53, 'Retirement Fund Contributions', 10),
+(54, 'Other Savings Contributions', 10),
+
+-- Subcategories for 'Miscellaneous'
+(55, 'Any expenses that don’t fit into other categories', 11);

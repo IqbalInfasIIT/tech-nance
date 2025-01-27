@@ -39,9 +39,9 @@
 }
 
 .sidebar {
-  width: 200px;
+  width: 12vw;
   background-color: #e0e0e0;
-  padding: 10px;
+  padding: 1vw;
   height: 100vh;
   position: fixed;
   top: 0;
@@ -49,10 +49,11 @@
 }
 
 .content {
-  margin-left: 210px;
-  padding: 20px;
-  width: calc(100% - 210px);
+  margin-left: 13vw;
+  padding: 0.5vw;
+  width: 85vw;
   background-color: #f8f8f8; /* Off-white */
+  justify-content: center;
 }
 
 .sidebar ul {
