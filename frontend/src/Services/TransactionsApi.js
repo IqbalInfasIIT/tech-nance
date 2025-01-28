@@ -33,3 +33,43 @@ export const addTransaction = async (transaction) => {
     throw error;
   }
 };
+
+export const getTotalIncome = async (period) => {
+  try {
+    const response = await api.get('/transactions/total-income', { params: { period } });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching total income:', error);
+    throw error;
+  }
+};
+
+export const getIncomeBreakdown = async (period) => {
+  try {
+    const response = await api.get('/transactions/income-breakdown', { params: { period } });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching income breakdown:', error);
+    throw error;
+  }
+};
+
+export const getTotalExpense = async (period) => {
+  try {
+    const response = await api.get('/transactions/total-expense', { params: { period } });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching total expense:', error);
+    throw error;
+  }
+};
+
+export const getExpenseBreakdown = async (period) => {
+  try {
+    const response = await api.get('/transactions/expense-breakdown', { params: { period } });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching expense breakdown:', error);
+    throw error;
+  }
+};
