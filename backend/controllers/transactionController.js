@@ -1,11 +1,10 @@
 const db = require('../database/db');
 const Transaction = require('../models/Transaction');
 const TransactionService = require('../services/transactionService');
-const Source = require('../models/Source'); // Import Source model
-
+const Source = require('../models/Source');
 const transactionModel = new Transaction(db);
 const transactionService = new TransactionService(transactionModel);
-const sourceModel = new Source(db); // Create an instance of Source model
+const sourceModel = new Source(db);
 
 exports.getAllTransactions = async (req, res) => {
   try {
@@ -99,3 +98,56 @@ exports.deleteTransaction = async (req, res) => {
     res.status(500).send('Error deleting transaction');
   }
 };
+
+exports.getTotalIncome = async (req, res) => {
+  try {
+    const period = req.query.period;
+    console.log('getTotalIncome called with period:', period); // Log the period
+    const [results] = await transactionService.getTotalIncome(period);
+    console.log('Total Income Results:', results); // Log the results
+    res.json(results[0]);
+  } catch (err) {
+    console.error('Error fetching total income:', err);
+    res.status(500).send('Error fetching total income');
+  }
+};
+
+exports.getIncomeBreakdown = async (req, res) => {
+  try {
+    const period = req.query.period;
+    console.log('getIncomeBreakdown called with period:', period); // Log the period
+    const [results] = await transactionService.getIncomeBreakdown(period);
+    console.log('Income Breakdown Results:', results); // Log the results
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching income breakdown:', err);
+    res.status(500).send('Error fetching income breakdown');
+  }
+};
+
+exports.getTotalExpense = async (req, res) => {
+  try {
+    const period = req.query.period;
+    console.log('getTotalExpense called with period:', period); // Log the period
+    const [results] = await transactionService.getTotalExpense(period);
+    console.log('Total Expense Results:', results); // Log the results
+    res.json(results[0]);
+  } catch (err) {
+    console.error('Error fetching total expense:', err);
+    res.status(500).send('Error fetching total expense');
+  }
+};
+
+exports.getExpenseBreakdown = async (req, res) => {
+  try {
+    const period = req.query.period;
+    console.log('getExpenseBreakdown called with period:', period); // Log the period
+    const [results] = await transactionService.getExpenseBreakdown(period);
+    console.log('Expense Breakdown Results:', results); // Log the results
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching expense breakdown:', err);
+    res.status(500).send('Error fetching expense breakdown');
+  }
+};
+
