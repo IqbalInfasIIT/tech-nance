@@ -7,16 +7,20 @@ class TransactionService {
     return this.transactionModel.getAll();
   }
 
+  async getAllTransactionsWithNames() {
+    return this.transactionModel.getAllWithNames();
+  }  
+
   async addTransaction(transaction) {
     return this.transactionModel.add(transaction);
   }
 
-  async getTransactionById(transactionId) {
-    return this.transactionModel.getById(transactionId);
-  }
-
   async deleteTransaction(transactionId) {
     return this.transactionModel.delete(transactionId);
+  }
+
+  async getTransactionById(transactionId) {
+    return this.transactionModel.getById(transactionId);
   }
 
   async getTotalIncome(period) {
@@ -34,6 +38,11 @@ class TransactionService {
   async getExpenseBreakdown(period) {
     return this.transactionModel.getExpenseBreakdown(period);
   }
+
+  async getMonthlyTotals() {
+    return this.transactionModel.getMonthlyTotals();
+  }
+
 }
 
 module.exports = TransactionService;

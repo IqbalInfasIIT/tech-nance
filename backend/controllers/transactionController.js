@@ -16,6 +16,16 @@ exports.getAllTransactions = async (req, res) => {
   }
 };
 
+exports.getAllTransactionsWithNames = async (req, res) => {
+  try {
+    const [results] = await transactionService.getAllTransactionsWithNames();
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching transactions with names:', err);
+    res.status(500).send('Error fetching transactions with names');
+  }
+};
+
 exports.addTransaction = async (req, res) => {
   try {
     const transaction = req.body;
@@ -34,15 +44,12 @@ exports.addTransaction = async (req, res) => {
       paymentMethod: 'Cash'
     };
 
-    // Merge transaction with default values
     const finalTransaction = { ...defaultValues, ...transaction };
 
     console.log('Final transaction with defaults:', finalTransaction);
 
-    // Add the transaction
     await transactionService.addTransaction(finalTransaction);
 
-    // Update balances based on the transaction type
     switch (finalTransaction.type) {
       case 'transfer':
         await sourceModel.decrementBalance(finalTransaction.sourceId, finalTransaction.amount);
@@ -68,14 +75,66 @@ exports.addTransaction = async (req, res) => {
       default:
         break;
     }
-    console.log('half')
+    
+    console.log('half');
     res.status(201).json({ message: 'Transaction added successfully!' });
   } catch (err) {
     console.error('Error adding transaction:', err);
     res.status(500).json({ message: 'Error adding transaction' });
   }
-  console.log('complete')
+
+  console.log('complete');
 };
+
+
+exports.deleteTransaction = async (req, res) => {
+  try {
+    const transactionId = req.params.transactionId;
+
+    // Fetch the transaction details to get the necessary info for balance adjustment
+    const [transactionResult] = await transactionService.getTransactionById(transactionId);
+    if (transactionResult.length === 0) {
+      return res.status(404).send('Transaction not found');
+    }
+    const transaction = transactionResult[0];
+
+    // Delete the transaction
+    await transactionService.deleteTransaction(transactionId);
+
+    // Adjust balances based on the transaction type
+    switch (transaction.type) {
+      case 'transfer':
+        await sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
+        await sourceModel.decrementBalance(transaction.destinationId, transaction.amount);
+        break;
+      case 'income':
+        await sourceModel.decrementBalance(transaction.sourceId, transaction.amount);
+        break;
+      case 'expense':
+        await sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
+        break;
+      case 'refund':
+        await sourceModel.decrementBalance(transaction.sourceId, transaction.amount);
+        break;
+      case 'topup':
+        await sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
+        await sourceModel.decrementBalance(transaction.destinationId, transaction.amount);
+        break;
+      case 'settle':
+        await sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
+        await sourceModel.decrementBalance(transaction.destinationId, transaction.amount);
+        break;
+      default:
+        break;
+    }
+
+    res.send('Transaction deleted successfully');
+  } catch (err) {
+    console.error('Error deleting transaction:', err);
+    res.status(500).send('Error deleting transaction');
+  }
+};
+
 
 exports.getTransactionById = async (req, res) => {
   try {
@@ -85,17 +144,6 @@ exports.getTransactionById = async (req, res) => {
   } catch (err) {
     console.error('Error fetching transaction details:', err);
     res.status(500).send('Error fetching transaction details');
-  }
-};
-
-exports.deleteTransaction = async (req, res) => {
-  try {
-    const transactionId = req.params.transactionId;
-    await transactionService.deleteTransaction(transactionId);
-    res.send('Transaction deleted successfully');
-  } catch (err) {
-    console.error('Error deleting transaction:', err);
-    res.status(500).send('Error deleting transaction');
   }
 };
 
@@ -150,4 +198,15 @@ exports.getExpenseBreakdown = async (req, res) => {
     res.status(500).send('Error fetching expense breakdown');
   }
 };
+
+exports.getMonthlyTotals = async (req, res) => {
+  try {
+    const [results] = await transactionService.getMonthlyTotals();
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching monthly totals:', err);
+    res.status(500).send('Error fetching monthly totals');
+  }
+};
+
 
