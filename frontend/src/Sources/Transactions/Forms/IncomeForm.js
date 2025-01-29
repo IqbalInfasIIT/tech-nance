@@ -1,42 +1,68 @@
 import React, { useState } from 'react';
-import AddCategoryPopup from '../Category/AddCategoryPopup';
+import CategoryPopup from './CategoryComp/CategoryPopup';
+import AddCategoryPopup from './CategoryComp/AddCategoryPopup'; // Import AddCategoryPopup
+import './Form.css';
 
-function IncomeForm({ formData, handleInputChange, incomeCategories, addCategory }) {
+function IncomeForm({ handleInputChange, incomeCategories, addCategory, deleteCategory, incomeMainCategoryCount }) {
   const [showPopup, setShowPopup] = useState(false);
+  const [showAddPopup, setShowAddPopup] = useState(false); // State to handle Add Category Popup
+  const [selectedCategory, setSelectedCategory] = useState('');
 
-  const handleCategoryChange = (e) => {
-    const { value } = e.target;
-    if (value === 'add') {
-      setShowPopup(true);
-    } else {
-      handleInputChange(e);
-      handleInputChange({ target: { name: 'destinationId', value: value } });
-      handleInputChange({ target: { name: 'destinationType', value: 'income_category' } });
-    }
+  const handleCategoryChange = (categoryId, categoryName) => {
+    setSelectedCategory(categoryName);
+    handleInputChange({ target: { name: 'destinationId', value: categoryId } });
+    handleInputChange({ target: { name: 'destinationType', value: 'income_category' } });
   };
 
   const handlePopupClose = () => {
     setShowPopup(false);
   };
 
+  const handleAddPopupClose = () => {
+    setShowAddPopup(false);
+  };
+
   return (
     <div className="form-group full-width">
       <label htmlFor="destinationId">Source of Income:</label>
-      <select id="destinationId" name="destinationId" value={formData.destinationId} onChange={handleCategoryChange} required>
-        <option value="">Select an income category</option>
-        <option value="add">Add a category</option>
-        {incomeCategories.map(category => (
-          <option key={category.category_id} value={category.category_id}>
-            {category.category_name}
-          </option>
-        ))}
-      </select>
-      <AddCategoryPopup 
+      <div className="selected-category-container">
+        <input
+          type="text"
+          className="selected-category-field"
+          value={selectedCategory}
+          placeholder="Select a category"
+          readOnly
+        />
+        <button 
+          type="button" 
+          className="selected-category-button" 
+          onClick={() => setShowPopup(true)}
+        >
+          Select category
+        </button>
+        <button 
+          type="button" 
+          className="add-category-button" 
+          onClick={() => setShowAddPopup(true)}
+        >
+          Add Category
+        </button>
+      </div>
+      <CategoryPopup
         open={showPopup}
         handleClose={handlePopupClose}
-        categoryType="income"
+        type="income_categories"
         categories={incomeCategories}
+        onSelect={handleCategoryChange}
+        onDelete={(categoryId) => deleteCategory(categoryId, 'income_categories')}
+        count={incomeMainCategoryCount}
+      />
+      <AddCategoryPopup
+        open={showAddPopup}
+        handleClose={handleAddPopupClose}
+        type="income_categories"
         addCategory={addCategory}
+        categories={incomeCategories}
       />
     </div>
   );

@@ -7,7 +7,9 @@ import RefundForm from './Forms/RefundForm';
 import SettleForm from './Forms/SettleForm';
 import AmountInput from './Components/AmountInputView';
 
-function MainTransactionForm({ selectedType, formData, handleInputChange, handleFormSubmit, incomeCategories, expenseCategories, accounts, wallets, creditCards }) {
+function MainTransactionForm({ 
+  selectedType, formData, handleInputChange, handleFormSubmit, incomeCategories, expenseCategories, accounts, wallets, creditCards, addCategory, deleteCategory, incomeMainCategoryCount, expenseMainCategoryCount
+}) {
   const [amount, setAmount] = useState('');
   const [amountError, setAmountError] = useState('');
 
@@ -45,21 +47,68 @@ function MainTransactionForm({ selectedType, formData, handleInputChange, handle
           <label htmlFor="description">Description:</label>
           <input type="text" id="description" name="description" value={formData.description} onChange={handleInputChange} required />
         </div>
-        {selectedType === 'income' && <IncomeForm formData={formData} handleInputChange={handleInputChange} incomeCategories={incomeCategories} />}
-        {selectedType === 'transfer' && <TransferForm formData={formData} handleInputChange={handleInputChange} accounts={accounts} wallets={wallets} />}
-        {selectedType === 'expense' && <ExpenseForm formData={formData} handleInputChange={handleInputChange} expenseCategories={expenseCategories} />}
-        {selectedType === 'topup' && <TopupForm formData={formData} handleInputChange={handleInputChange} wallets={wallets} />}
-        {selectedType === 'refund' && <RefundForm formData={formData} handleInputChange={handleInputChange} expenseCategories={expenseCategories} />}
-        {selectedType === 'settle' && <SettleForm formData={formData} handleInputChange={handleInputChange} creditCards={creditCards} />}
+        {selectedType === 'income' && (
+          <IncomeForm 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+            incomeCategories={incomeCategories} 
+            addCategory={addCategory} 
+            deleteCategory={deleteCategory} 
+            incomeMainCategoryCount={incomeMainCategoryCount}
+          />
+        )}
+        {selectedType === 'transfer' && (
+          <TransferForm 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+            accounts={accounts} 
+            wallets={wallets} 
+          />
+        )}
+        {selectedType === 'expense' && (
+          <ExpenseForm 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+            expenseCategories={expenseCategories} 
+            addCategory={addCategory} 
+            deleteCategory={deleteCategory} 
+            expenseMainCategoryCount={expenseMainCategoryCount}
+          />
+        )}
+        {selectedType === 'topup' && (
+          <TopupForm 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+            wallets={wallets} 
+          />
+        )}
+        {selectedType === 'refund' && (
+          <RefundForm 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+            expenseCategories={expenseCategories} 
+          />
+        )}
+        {selectedType === 'settle' && (
+          <SettleForm 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+            creditCards={creditCards} 
+          />
+        )}
         <div className="form-group full-width">
           <label htmlFor="amount">Amount:</label>
-          <AmountInput amount={amount} setAmount={setAmount} error={amountError} setError={setAmountError} />
+          <AmountInput 
+            amount={amount} 
+            setAmount={setAmount} 
+            error={amountError} 
+            setError={setAmountError} 
+          />
         </div>
         <div className="spanwid">
           <button type="submit" className="add-transaction-button">Add Transaction</button>
         </div>
       </form>
-
     </div>
   );
 }

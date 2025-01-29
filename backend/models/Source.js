@@ -16,7 +16,14 @@ class Source {
   async add(source) {
     const query = `INSERT INTO capital_sources (source_type, source_name, balance, linked_account_id, credit_limit, cycle_end_date, is_bank_account, isActive) 
                    VALUES (?, ?, ?, ?, ?, ?, ?, TRUE)`;
-    const values = [source.sourceType, source.sourceName, source.balance, source.linkedAccountId, source.creditLimit, source.cycleEndDate, source.isBankAccount];
+    const values = [
+      source.sourceType, 
+      source.sourceName, 
+      source.balance, 
+      source.linkedAccountId, 
+      source.creditLimit, 
+      source.cycleEndDate, 
+      source.isBankAccount];
     return this.db.promise().query(query, values);
   }
 

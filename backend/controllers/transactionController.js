@@ -2,6 +2,7 @@ const db = require('../database/db');
 const Transaction = require('../models/Transaction');
 const TransactionService = require('../services/transactionService');
 const Source = require('../models/Source');
+
 const transactionModel = new Transaction(db);
 const transactionService = new TransactionService(transactionModel);
 const sourceModel = new Source(db);
@@ -91,17 +92,14 @@ exports.deleteTransaction = async (req, res) => {
   try {
     const transactionId = req.params.transactionId;
 
-    // Fetch the transaction details to get the necessary info for balance adjustment
     const [transactionResult] = await transactionService.getTransactionById(transactionId);
     if (transactionResult.length === 0) {
       return res.status(404).send('Transaction not found');
     }
     const transaction = transactionResult[0];
 
-    // Delete the transaction
     await transactionService.deleteTransaction(transactionId);
 
-    // Adjust balances based on the transaction type
     switch (transaction.type) {
       case 'transfer':
         await sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
@@ -189,9 +187,9 @@ exports.getTotalExpense = async (req, res) => {
 exports.getExpenseBreakdown = async (req, res) => {
   try {
     const period = req.query.period;
-    console.log('getExpenseBreakdown called with period:', period); // Log the period
+    console.log('getExpenseBreakdown called with period:', period);
     const [results] = await transactionService.getExpenseBreakdown(period);
-    console.log('Expense Breakdown Results:', results); // Log the results
+    console.log('Expense Breakdown Results:', results);
     res.json(results);
   } catch (err) {
     console.error('Error fetching expense breakdown:', err);

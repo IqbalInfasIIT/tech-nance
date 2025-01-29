@@ -1,0 +1,96 @@
+.popup-data {
+  background: rgb(255, 255, 255);
+  border-radius: 0.8em;
+  box-shadow: 0 4vh 8vh rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-height: 80vh;
+  margin: auto;
+  overflow-y: scroll;
+  padding: 1em;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-list, .subcategory-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-item {
+  padding: 0.5em 0;
+  border-bottom: 0.1vh solid #ccc;
+}
+
+.main-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.subcategory-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background-color: #f9f9f9;
+}
+
+.subcategory-item:hover {
+  background-color: #949494;
+}
+
+.clickable-box {
+  padding: 0.8em;
+}
+
+.delete-button-main {
+  background-color: #000000;
+  color: white;
+  border: none;
+  border-radius: 0.4em;
+  cursor: pointer;
+  padding: 0.6em 1.2em;
+  flex-shrink: 0;
+  margin-left: 1em;
+}
+.delete-button-main:hover1 {
+  background-color: #949494;
+}
+
+.delete-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 0.4em;
+  cursor: pointer;
+  padding: 0.6em 1.2em;
+  flex-shrink: 0;
+  margin-left: 1em;
+}
+
+.delete-button:hover {
+  background-color: #960505;
+}
+
+.close-button {
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 0.4em;
+  cursor: pointer;
+  padding: 1em 2em;
+  margin-top: 2em;
+}
+
+.close-button:hover {
+  background-color: #003064;
+}
+
+.clickable-box:hover {
+  background-color: #e1f5fe; /* Change color on hover */
+}

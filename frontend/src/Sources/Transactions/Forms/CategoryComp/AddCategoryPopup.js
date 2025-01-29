@@ -1,24 +1,36 @@
 import React, { useState } from 'react';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import './AddCategoryPopup.css';
 
-function AddCategoryPopup({ open, handleClose, categoryType, categories, addCategory }) {
+function AddCategoryPopup({ open, handleClose, type, categories, addCategory }) {
   const [categoryName, setCategoryName] = useState('');
   const [parentCategoryId, setParentCategoryId] = useState('');
+  const [isActive, setIsActive] = useState(true);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const newCategory = {
-      category_name: categoryName,
-      parent_category_id: parentCategoryId || null
+      name: categoryName,
+      parentCategoryId: parentCategoryId || null,
+      isActive: true
     };
-    addCategory(newCategory);
-    handleClose();
+
+    try {
+      await addCategory(newCategory, type);
+      setCategoryName('');
+      setParentCategoryId('');
+      setIsActive(true);
+      handleClose();
+    } catch (error) {
+      console.error(`Error adding ${type} category:`, error);
+      alert(`Error adding ${type} category. Please try again.`);
+    }
   };
 
   return (
     <Popup open={open} closeOnDocumentClick onClose={handleClose}>
       <div className="popup-content">
-        <h3>Add {categoryType} Category</h3>
+        <h3>Add {type.charAt(0).toUpperCase() + type.slice(1)} Category</h3>
         <div className="form-group">
           <label htmlFor="categoryName">Category Name:</label>
           <input
@@ -45,8 +57,19 @@ function AddCategoryPopup({ open, handleClose, categoryType, categories, addCate
           </select>
         </div>
         <div className="popup-buttons">
-          <button onClick={handleSave}>Save</button>
-          <button onClick={handleClose}>Cancel</button>
+          <button 
+            onClick={handleSave} 
+            disabled={!categoryName.trim()} // Disable if category name is empty
+            aria-label="Save Category"
+          >
+            Save
+          </button>
+          <button 
+            onClick={handleClose} 
+            aria-label="Cancel"
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </Popup>

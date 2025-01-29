@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { getSourceById, getBankAccounts, getDigitalWallets, getCreditCards } from '../../Services/SourcesApi';
-import { getIncomeCategories, getExpenseCategories } from '../../Services/CategoryApi';
+import { getMainCategories, addCategory, deleteCategory, getMainCategoryCount } from '../../Services/CategoryApi';
 import { addTransaction } from '../../Services/TransactionsApi';
 import './TransactionsScreen.css';
 import TransactionTypesView from './Components/TransactionTypesView';
@@ -30,6 +30,8 @@ function TransactionScreen() {
   const [accounts, setAccounts] = useState([]);
   const [wallets, setWallets] = useState([]);
   const [creditCards, setCreditCards] = useState([]);
+  const [incomeMainCategoryCount, setIncomeMainCategoryCount] = useState(0);
+  const [expenseMainCategoryCount, setExpenseMainCategoryCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,12 +39,22 @@ function TransactionScreen() {
         const sourceData = await getSourceById(sourceId);
         setSource(sourceData);
 
-        const [incomeCats, expenseCats, bankAccounts, digitalWallets, creditCards] = await Promise.all([
-          getIncomeCategories(),
-          getExpenseCategories(),
+        const [
+          incomeCats,
+          expenseCats,
+          bankAccounts,
+          digitalWallets,
+          creditCards,
+          incomeCategoryCount,
+          expenseCategoryCount
+        ] = await Promise.all([
+          getMainCategories('income_categories'),
+          getMainCategories('expense_categories'),
           getBankAccounts(),
           getDigitalWallets(),
           getCreditCards(),
+          getMainCategoryCount('income_categories'),
+          getMainCategoryCount('expense_categories')
         ]);
 
         setIncomeCategories(incomeCats);
@@ -50,6 +62,8 @@ function TransactionScreen() {
         setAccounts(bankAccounts);
         setWallets(digitalWallets);
         setCreditCards(creditCards);
+        setIncomeMainCategoryCount(incomeCategoryCount.mainCategoryCount);
+        setExpenseMainCategoryCount(expenseCategoryCount.mainCategoryCount);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -116,6 +130,37 @@ function TransactionScreen() {
       setSelectedType('');
     }
   };
+
+  const handleAddCategory = async (category, type) => {
+    try {
+      await addCategory(category, type);
+      if (type === 'income_categories') {
+        setIncomeCategories([...incomeCategories, category]);
+      } else {
+        setExpenseCategories([...expenseCategories, category]);
+      }
+
+      alert(`${type.slice(0, -10)} category added successfully.`);
+    } catch (error) {
+      console.error(`Error adding ${type.slice(0, -10)} category:`, error);
+      alert(`Error adding ${type.slice(0, -10)} category. Please try again.`);
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId, categoryType) => {
+    try {
+      await deleteCategory(categoryId, categoryType);
+      if (categoryType === 'income_categories') {
+        setIncomeCategories(incomeCategories.filter(category => category.category_id !== categoryId));
+      } else {
+        setExpenseCategories(expenseCategories.filter(category => category.category_id !== categoryId));
+      }
+      alert('Category deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      alert('Error deleting category. Please try again.');
+    }
+  };
   
   return (
     <div className="transaction-container">
@@ -141,6 +186,10 @@ function TransactionScreen() {
         accounts={accounts}
         wallets={wallets}
         creditCards={creditCards}
+        addCategory={handleAddCategory}
+        deleteCategory={handleDeleteCategory}
+        incomeMainCategoryCount={incomeMainCategoryCount}
+        expenseMainCategoryCount={expenseMainCategoryCount}
       />
     </div>
   );
