@@ -8,6 +8,11 @@ class Source {
     return this.db.promise().query(query);
   }
 
+  async getAccounts() {
+    const query = 'SELECT * FROM capital_sources WHERE source_type = "Account" AND isActive = TRUE';
+    return this.db.promise().query(query);
+  }
+
   async getBankAccounts() {
     const query = 'SELECT * FROM capital_sources WHERE is_bank_account = TRUE AND isActive = TRUE';
     return this.db.promise().query(query);
@@ -16,7 +21,14 @@ class Source {
   async add(source) {
     const query = `INSERT INTO capital_sources (source_type, source_name, balance, linked_account_id, credit_limit, cycle_end_date, is_bank_account, isActive) 
                    VALUES (?, ?, ?, ?, ?, ?, ?, TRUE)`;
-    const values = [source.sourceType, source.sourceName, source.balance, source.linkedAccountId, source.creditLimit, source.cycleEndDate, source.isBankAccount];
+    const values = [
+      source.sourceType, 
+      source.sourceName, 
+      source.balance, 
+      source.linkedAccountId, 
+      source.creditLimit, 
+      source.cycleEndDate, 
+      source.isBankAccount];
     return this.db.promise().query(query, values);
   }
 

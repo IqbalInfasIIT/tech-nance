@@ -7,6 +7,7 @@ import AddSourceScreen from './Sources/AddSourceScreen';
 import TransactionsScreen from './Sources/Transactions/TransactionsScreen';
 import Reports from './Reports/Reports';
 import Budgets from './Budgets/Budgets';
+import AddCategoryScreen from './Sources/Transactions/Forms/CategoryComp/AddCategoryScreen';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/transactions/:sourceId" element={<TransactionsScreen />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/budgets" element={<Budgets />} />
+            <Route path="/add-category/:type" element={<AddCategoryScreen />} />
           </Routes>
         </div>
       </div>

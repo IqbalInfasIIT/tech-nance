@@ -7,6 +7,10 @@ class SourceService {
     return this.sourceModel.getAllActive();
   }
 
+  async getAccounts() {
+    return this.sourceModel.getAccounts();
+  }
+
   async getBankAccounts() {
     return this.sourceModel.getBankAccounts();
   }

@@ -1,0 +1,42 @@
+.t-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.7rem;
+  }
+
+.t-table th, .t-table td {
+  padding: 0.3rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+  
+.t-table th {
+  background-color: #f7f7f7;
+  font-weight: bold;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+}
+  
+.t-table tr:nth-child(even) {
+  background-color: #d2d2d2;
+}
+  
+.t-table tr:hover {
+  background-color: #91f6ff;
+}
+  
+.t-table tr.expense, .t-table tr.settle, .t-table tr.topup {
+  color: red;
+}
+  
+.t-table tr.income, .t-table tr.refund {
+  color: green;
+}
+   
+.t-table .col-amount {
+  width: 10%;
+  font-weight: bold;
+}
+ 

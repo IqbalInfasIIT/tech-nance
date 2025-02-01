@@ -15,7 +15,7 @@ function AmountInput({ amount, setAmount, error, setError }) {
   };
 
   return (
-    <div>
+    <div className="form-group full-width">
       <input
         type="text"
         inputMode="numeric"

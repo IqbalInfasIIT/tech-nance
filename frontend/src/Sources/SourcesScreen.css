@@ -1,4 +1,3 @@
-/* Main container for the layout */
 .main-container {
   display: flex;
   flex-direction: row;
@@ -9,7 +8,6 @@
   overflow: hidden;
 }
 
-/* Left panel */
 .left-panel {
   flex: 0 0 35%;
   background-color: #c8c8c8;
@@ -20,7 +18,6 @@
   overflow-y: auto;
 }
 
-/* Left panel */
 .right-panel {
   flex: 0 0 65%;
   padding-left: 2vw;
@@ -28,14 +25,12 @@
   overflow-y: auto;
 }
 
-/* Account list */
 .account-list {
   height: 85%;
   overflow-y: auto;
 
 }
 
-/* Account card */
 .account-card {
   box-sizing: border-box;
   background-color: #fff;
@@ -49,25 +44,22 @@
 }
 
 .account-card:hover , .item-card:hover {
-  background-color: #ababab; /* Light blue color on hover */
+  background-color: #ababab;
 }
 
-/* Account row */
 .account-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0.5vh 0; /* Reduced margin for a more compact layout */
+  margin: 0.5vh 0;
 }
 
-/* Delete row (button) */
 .delete-row {
   display: flex;
-  justify-content: center; /* Center the delete button horizontally */
-  margin-top: 1vh; /* Optional: add some space above the button */
+  justify-content: center; 
+  margin-top: 1vh;
 }
 
-/* Add account button */
 .add-account {
   background-color: #46a95d;
   color: #fff;
@@ -82,7 +74,6 @@
   background-color: #344738;
 }
 
-/* Main card */
 .main-card {
   background-color: #c8c8c8;
   border-radius: 8px;
@@ -91,7 +82,6 @@
   width: 50vw;
 }
 
-/* Item list in main card */
 .item-list {
   display: flex;
   overflow-x: auto;
@@ -100,7 +90,6 @@
   padding-left: 2.5%;
 }
 
-/* Item card */
 .item-card {
   background-color: #fff;
   border: 1px solid #ccc;
@@ -113,7 +102,6 @@
   height: auto;
 }
 
-/* Add item button */
 .add-item {
   min-width: 10vw;
   background-color: #28a745;
@@ -129,7 +117,6 @@
   background-color: #218838;
 }
 
-/* Delete button */
 button {
   background-color: #dc3545;
   color: #fff;

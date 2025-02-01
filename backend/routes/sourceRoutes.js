@@ -3,6 +3,7 @@ const router = express.Router();
 const sourceController = require('../controllers/sourceController');
 
 router.get('/get-capital-sources', sourceController.getCapitalSources);
+router.get('/get-account-sources', sourceController.getAccounts);
 router.get('/get-bank-accounts', sourceController.getBankAccounts);
 router.get('/get-digital-wallets', sourceController.getDigitalWallets);
 router.get('/get-cards', sourceController.getCards);

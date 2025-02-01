@@ -2,6 +2,7 @@ const db = require('../database/db');
 const Transaction = require('../models/Transaction');
 const TransactionService = require('../services/transactionService');
 const Source = require('../models/Source');
+
 const transactionModel = new Transaction(db);
 const transactionService = new TransactionService(transactionModel);
 const sourceModel = new Source(db);
@@ -13,6 +14,16 @@ exports.getAllTransactions = async (req, res) => {
   } catch (err) {
     console.error('Error fetching transactions:', err);
     res.status(500).send('Error fetching transactions');
+  }
+};
+
+exports.getAllTransactionsWithNames = async (req, res) => {
+  try {
+    const [results] = await transactionService.getAllTransactionsWithNames();
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching transactions with names:', err);
+    res.status(500).send('Error fetching transactions with names');
   }
 };
 
@@ -34,15 +45,12 @@ exports.addTransaction = async (req, res) => {
       paymentMethod: 'Cash'
     };
 
-    // Merge transaction with default values
     const finalTransaction = { ...defaultValues, ...transaction };
 
     console.log('Final transaction with defaults:', finalTransaction);
 
-    // Add the transaction
     await transactionService.addTransaction(finalTransaction);
 
-    // Update balances based on the transaction type
     switch (finalTransaction.type) {
       case 'transfer':
         await sourceModel.decrementBalance(finalTransaction.sourceId, finalTransaction.amount);
@@ -68,14 +76,63 @@ exports.addTransaction = async (req, res) => {
       default:
         break;
     }
-    console.log('half')
+    
+    console.log('half');
     res.status(201).json({ message: 'Transaction added successfully!' });
   } catch (err) {
     console.error('Error adding transaction:', err);
     res.status(500).json({ message: 'Error adding transaction' });
   }
-  console.log('complete')
+
+  console.log('complete');
 };
+
+
+exports.deleteTransaction = async (req, res) => {
+  try {
+    const transactionId = req.params.transactionId;
+
+    const [transactionResult] = await transactionService.getTransactionById(transactionId);
+    if (transactionResult.length === 0) {
+      return res.status(404).send('Transaction not found');
+    }
+    const transaction = transactionResult[0];
+
+    await transactionService.deleteTransaction(transactionId);
+
+    switch (transaction.type) {
+      case 'transfer':
+        await sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
+        await sourceModel.decrementBalance(transaction.destinationId, transaction.amount);
+        break;
+      case 'income':
+        await sourceModel.decrementBalance(transaction.sourceId, transaction.amount);
+        break;
+      case 'expense':
+        await sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
+        break;
+      case 'refund':
+        await sourceModel.decrementBalance(transaction.sourceId, transaction.amount);
+        break;
+      case 'topup':
+        await sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
+        await sourceModel.decrementBalance(transaction.destinationId, transaction.amount);
+        break;
+      case 'settle':
+        await sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
+        await sourceModel.decrementBalance(transaction.destinationId, transaction.amount);
+        break;
+      default:
+        break;
+    }
+
+    res.send('Transaction deleted successfully');
+  } catch (err) {
+    console.error('Error deleting transaction:', err);
+    res.status(500).send('Error deleting transaction');
+  }
+};
+
 
 exports.getTransactionById = async (req, res) => {
   try {
@@ -88,23 +145,12 @@ exports.getTransactionById = async (req, res) => {
   }
 };
 
-exports.deleteTransaction = async (req, res) => {
-  try {
-    const transactionId = req.params.transactionId;
-    await transactionService.deleteTransaction(transactionId);
-    res.send('Transaction deleted successfully');
-  } catch (err) {
-    console.error('Error deleting transaction:', err);
-    res.status(500).send('Error deleting transaction');
-  }
-};
-
 exports.getTotalIncome = async (req, res) => {
   try {
     const period = req.query.period;
-    console.log('getTotalIncome called with period:', period); // Log the period
+    console.log('getTotalIncome called with period:', period);
     const [results] = await transactionService.getTotalIncome(period);
-    console.log('Total Income Results:', results); // Log the results
+    console.log('Total Income Results:', results);
     res.json(results[0]);
   } catch (err) {
     console.error('Error fetching total income:', err);
@@ -115,9 +161,9 @@ exports.getTotalIncome = async (req, res) => {
 exports.getIncomeBreakdown = async (req, res) => {
   try {
     const period = req.query.period;
-    console.log('getIncomeBreakdown called with period:', period); // Log the period
+    console.log('getIncomeBreakdown called with period:', period);
     const [results] = await transactionService.getIncomeBreakdown(period);
-    console.log('Income Breakdown Results:', results); // Log the results
+    console.log('Income Breakdown Results:', results);
     res.json(results);
   } catch (err) {
     console.error('Error fetching income breakdown:', err);
@@ -128,9 +174,9 @@ exports.getIncomeBreakdown = async (req, res) => {
 exports.getTotalExpense = async (req, res) => {
   try {
     const period = req.query.period;
-    console.log('getTotalExpense called with period:', period); // Log the period
+    console.log('getTotalExpense called with period:', period);
     const [results] = await transactionService.getTotalExpense(period);
-    console.log('Total Expense Results:', results); // Log the results
+    console.log('Total Expense Results:', results);
     res.json(results[0]);
   } catch (err) {
     console.error('Error fetching total expense:', err);
@@ -141,13 +187,24 @@ exports.getTotalExpense = async (req, res) => {
 exports.getExpenseBreakdown = async (req, res) => {
   try {
     const period = req.query.period;
-    console.log('getExpenseBreakdown called with period:', period); // Log the period
+    console.log('getExpenseBreakdown called with period:', period);
     const [results] = await transactionService.getExpenseBreakdown(period);
-    console.log('Expense Breakdown Results:', results); // Log the results
+    console.log('Expense Breakdown Results:', results);
     res.json(results);
   } catch (err) {
     console.error('Error fetching expense breakdown:', err);
     res.status(500).send('Error fetching expense breakdown');
   }
 };
+
+exports.getMonthlyTotals = async (req, res) => {
+  try {
+    const [results] = await transactionService.getMonthlyTotals();
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching monthly totals:', err);
+    res.status(500).send('Error fetching monthly totals');
+  }
+};
+
 

@@ -1,0 +1,75 @@
+.pp-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  max-width: 600px;
+  background-color: white;
+  box-shadow: 0 4vh 8vh rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.pp-close {
+  position: absolute;
+  top: 2vh;
+  right: 2vw;
+  background: none;
+  border: none;
+  font-size: 2vh;
+  cursor: pointer;
+}
+
+.pp-header {
+  padding: 2vh 3vw;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  font-size: 2vh;
+  font-weight: bold;
+}
+
+.pp-content {
+  padding: 2vh 3vw;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.pp-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1vh;
+}
+
+.pp-table th,
+.pp-table td {
+  padding: 1vh 2vw;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.pp-table th {
+  background-color: #f5f5f5;
+}
+
+.pp-actions {
+  padding: 2vh 3vw;
+  background-color: #f5f5f5;
+  border-top: 1px solid #ddd;
+  text-align: right;
+}
+
+.pp-button {
+  padding: 1vh 2vw;
+  font-size: 1.5vh;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+}
+
+.pp-button:hover {
+  background-color: #0056b3;
+}

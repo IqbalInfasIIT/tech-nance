@@ -14,6 +14,16 @@ export const getTransactions = async () => {
   }
 };
 
+export const getAllTransactionsWithNames = async () => {
+  try {
+    const response = await api.get('/transactions/get-transactions-with-names');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching transactions with names:', error);
+    throw error;
+  }
+};
+
 export const getTransactionById = async (transactionId) => {
   try {
     const response = await api.get(`/transactions/${transactionId}`);
@@ -70,6 +80,16 @@ export const getExpenseBreakdown = async (period) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching expense breakdown:', error);
+    throw error;
+  }
+};
+
+export const getMonthlyTotals = async () => {
+  try {
+    const response = await api.get('/transactions/monthly-totals');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching monthly totals:', error);
     throw error;
   }
 };

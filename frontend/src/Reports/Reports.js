@@ -1,89 +1,86 @@
-//Reports.js
-
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import AccountButtons from './AccountButtons';
-import PieChartDisplay from './PieChartDisplay';
-import TransactionsTable from './TransactionsTable';
+import React, { useState, useEffect } from 'react';
+import IncomeComponent from './Components/IncomeComponent';
+import ExpenseComponent from './Components/ExpenseComponent';
+import PeriodSelector from './Components/PeriodSelector';
+import TransactionsList from './Components/TransactionsList';
+import { getIncomeBreakdown, getExpenseBreakdown, getMonthlyTotals, getAllTransactionsWithNames } from '../Services/TransactionsApi';
+import CustomLineChart from './Components/CustomLineChart';
 import './Reports.css';
 
-function Reports() {
-  const [accounts, setAccounts] = useState([]);
-  const [totals, setTotals] = useState({ rent: 0, food: 0, travel: 0, personal: 0 });
+const Reports = () => {
+  const [period, setPeriod] = useState('2025-01');
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [incomeBreakdown, setIncomeBreakdown] = useState([]);
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [expenseBreakdown, setExpenseBreakdown] = useState([]);
+  const [monthlyTotals, setMonthlyTotals] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [selectedAccountId, setSelectedAccountId] = useState('all');
 
   useEffect(() => {
-    const fetchAccounts = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/accounts/get-accounts');
-        setAccounts(response.data);
+        const monthlyTotalsData = await getMonthlyTotals();
+        setMonthlyTotals(monthlyTotalsData);
+        
+        const currentMonthTotals = monthlyTotalsData.find(item => {
+          const formattedPeriod = `${item.year}-${String(item.month).padStart(2, '0')}`;
+          return formattedPeriod === period;
+        });
+
+        if (currentMonthTotals) {
+          setTotalIncome(currentMonthTotals.total_income);
+          setTotalExpense(currentMonthTotals.total_expenses);
+        } else {
+          setTotalIncome(0);
+          setTotalExpense(0);
+        }
+
+        const incomeBreakdownData = await getIncomeBreakdown(period);
+        setIncomeBreakdown(incomeBreakdownData);
+
+        const expenseBreakdownData = await getExpenseBreakdown(period);
+        setExpenseBreakdown(expenseBreakdownData);
+
+        const transactionsData = await getAllTransactionsWithNames();
+        setTransactions(transactionsData);
       } catch (error) {
-        console.error('Error fetching accounts:', error);
+        console.error('Error fetching data:', error);
       }
     };
-    fetchAccounts();
-    fetchAllData();
-  }, []);
 
-  const fetchAllData = async () => {
-    try {
-      const totalsResponse = await axios.get('http://localhost:3001/transactions/totals');
-      setTotals(totalsResponse.data);
+    fetchData();
+  }, [period]);
 
-      const transactionsResponse = await axios.get('http://localhost:3001/transactions/sorted-transactions');
-      setTransactions(transactionsResponse.data);
-    } catch (error) {
-      console.error('Error fetching all data:', error);
-    }
-  };
-
-  const fetchAccountData = async (accountId) => {
-    try {
-      const totalsResponse = await axios.get(`http://localhost:3001/transactions/totals/${accountId}`);
-      setTotals(totalsResponse.data);
-
-      const transactionsResponse = await axios.get(`http://localhost:3001/transactions/sorted-transactions/${accountId}`);
-      setTransactions(transactionsResponse.data.length ? transactionsResponse.data : []);
-      setSelectedAccountId(accountId);
-    } catch (error) {
-      console.error('Error fetching account data:', error);
-      setTransactions([]);
-      setSelectedAccountId(accountId);
-    }
-  };
-
-  const handleAllClick = () => {
-    setSelectedAccountId('all');
-    fetchAllData();
-  };
+  const netBalance = totalIncome - totalExpense;
+  const balanceMessage = netBalance > 0 ? 'Saved:' : netBalance < 0 ? 'Overspent by:' : 'Balanced';
+  const formattedNetBalance = new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(Math.abs(netBalance));
+  const balanceClass = netBalance > 0 ? 'saved' : netBalance < 0 ? 'overspent' : 'balanced';
 
   return (
     <div className="reports-container">
-      <h2>Reports</h2>
-      <PieChartDisplay totals={totals} />
-      <div className="accounts-buttons">
-        <button
-          onClick={handleAllClick}
-          className={`all-button ${selectedAccountId === 'all' ? 'active' : ''}`}
-        >
-          All
-        </button>
-        <div className="account-buttons-row">
-          {accounts.map((account) => (
-            <button
-              key={account.id}
-              onClick={() => fetchAccountData(account.id)}
-              className={`account-button ${selectedAccountId === account.id ? 'active' : ''}`}
-            >
-              {account.name}
-            </button>
-          ))}
+      <div className={`net-balance-container ${balanceClass}`}>
+        <PeriodSelector period={period} setPeriod={setPeriod} />
+        <span className="balance-value">{balanceMessage} {formattedNetBalance}</span>
+      </div>
+      <div className="reports-grid">
+        <div className="panel-left">
+          <div className="subOne-left">
+            <IncomeComponent totalIncome={totalIncome} breakdown={incomeBreakdown} />
+            <ExpenseComponent totalExpense={totalExpense} breakdown={expenseBreakdown} />
+          </div>
+          <div className='subTwo-left'>
+            <CustomLineChart data={monthlyTotals} />
+          </div>
+        </div>
+        <div className="panel-right">
+          <TransactionsList transactions={transactions} />
         </div>
       </div>
-      <TransactionsTable transactions={transactions} accounts={accounts} />
     </div>
   );
-}
+};
 
 export default Reports;

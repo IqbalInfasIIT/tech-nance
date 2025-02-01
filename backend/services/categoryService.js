@@ -1,21 +1,27 @@
-const db = require('../database/db');
-
 class CategoryService {
-  constructor(db) {
-    this.db = db;
+  constructor(categoryModel) {
+    this.categoryModel = categoryModel;
   }
 
-  async getIncomeCategories() {
-    const query = 'SELECT * FROM income_categories';
-    const [results] = await this.db.promise().query(query);
-    return results;
+  async addCategory(category, type) {
+    return this.categoryModel.addCategory(category, type);
   }
 
-  async getExpenseCategories() {
-    const query = 'SELECT * FROM expense_categories';
-    const [results] = await this.db.promise().query(query);
-    return results;
+  async deleteCategory(categoryId, type) {
+    return this.categoryModel.deleteCategory(categoryId, type);
+  }
+
+  async getMainCategoryCount(type) {
+    return this.categoryModel.getMainCategoryCount(type);
+  }
+
+  async getMainCategories(type) {
+    return this.categoryModel.getMainCategories(type);
+  }
+
+  async getLinkedCategories(type, parentId) {
+    return this.categoryModel.getLinkedCategories(type, parentId);
   }
 }
 
-module.exports = new CategoryService(db);
+module.exports = CategoryService;

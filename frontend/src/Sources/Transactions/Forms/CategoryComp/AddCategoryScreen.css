@@ -1,0 +1,67 @@
+.add-category-container {
+  padding: 2vh;
+  max-width: 60vw;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.add-category-container h3 {
+  margin-bottom: 2vh;
+  font-size: 3vh;
+}
+
+.form-group {
+  margin-bottom: 2vh;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.8vh;
+  font-size: 3vh;
+}
+
+.form-group input,
+.form-group select {
+  width: 80%;
+  padding: 2vh 2vw;
+  margin-bottom: 1.5vh;
+  border: 0.1vh solid #ccc;
+  border-radius: 0.5vh;
+  font-size: 2vh;
+  box-sizing: border-box;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  padding: 1vh;
+}
+
+.button-group button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 0.4vh;
+  cursor: pointer;
+  padding: 2vh 2vw;
+  box-sizing: border-box;
+  font-size: 2vh;
+  flex: 1;
+  margin: 0 1vh;
+}
+
+.button-group button:hover {
+  background-color: #0056b3;
+}
+
+.button-group button:last-child {
+  background-color: #ff4d4d;
+}
+
+.button-group button:last-child:hover {
+  background-color: #cc0000;
+}

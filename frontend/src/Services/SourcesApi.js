@@ -14,6 +14,16 @@ export const getSources = async () => {
   }
 };
 
+export const getAccountSources = async () => {
+  try {
+    const response = await api.get('/sources//get-account-sources');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching account sources:', error);
+    throw error;
+  }
+};
+
 export const getBankAccounts = async () => {
   try {
     const response = await api.get('/sources/get-bank-accounts');

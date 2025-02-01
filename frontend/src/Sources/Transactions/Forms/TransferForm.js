@@ -1,4 +1,4 @@
-function TransferForm({ formData, handleInputChange, accounts, wallets }) {
+function TransferForm({ formData, handleInputChange, accounts, sourceId }) {
 
   const handleTransferChange = (e) => {
     const { value } = e.target;
@@ -13,14 +13,11 @@ function TransferForm({ formData, handleInputChange, accounts, wallets }) {
       <select id="destinationId" name="destinationId" value={formData.destinationId} onChange={handleTransferChange} required>
         <option value="">Select a Destination</option>
         {accounts.map(account => (
-          <option key={account.source_id} value={account.source_id}>
-            {account.source_name}
-          </option>
-        ))}
-        {wallets.map(wallet => (
-          <option key={wallet.source_id} value={wallet.source_id}>
-            {wallet.source_name}
-          </option>
+          String(account.source_id) !== String(sourceId) && (
+            <option key={account.source_id} value={account.source_id}>
+              Bank: {account.source_name}
+            </option>
+          )
         ))}
       </select>
     </div>

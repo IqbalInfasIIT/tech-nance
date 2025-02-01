@@ -1,23 +1,48 @@
-function RefundForm({ formData, handleInputChange, expenseCategories }) {
+import React, { useState } from 'react';
+import CategoryPopup from './CategoryComp/CategoryPopup';
+import './Form.css';
 
-  const handleCategoryChange = (e) => {
-    const { value } = e.target;
-    handleInputChange(e);
-    handleInputChange({ target: { name: 'destinationId', value: value } });
-    handleInputChange({ target: { name: 'destinationType', value: 'expense_category' } });
+function RefundForm({ formData, handleInputChange, expenseCategories }) {
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
+
+  const handleCategoryChange = (categoryId, categoryName) => {
+    setSelectedCategory(categoryName);
+    handleInputChange({ target: { name: 'destinationId', value: categoryId } });
+    handleInputChange({ target: { name: 'destinationType', value: 'income_category' } });
+  };
+
+  const handlePopupClose = () => {
+    setShowPopup(false);
   };
 
   return (
     <div className="form-group full-width">
       <label htmlFor="destinationId">Expense Category:</label>
-      <select id="destinationId" name="destinationId" value={formData.destinationId} onChange={handleCategoryChange} required>
-        <option value="">Select an expense category</option>
-        {expenseCategories.map(category => (
-          <option key={category.category_id} value={category.category_id}>
-            {category.category_name}
-          </option>
-        ))}
-      </select>
+      <div className="selected-category-container">
+        <input
+          type="text"
+          className="selected-category-field"
+          value={selectedCategory}
+          placeholder="Select a category"
+          readOnly
+        />
+        <button 
+          type="button" 
+          className="selected-category-button" 
+          onClick={() => setShowPopup(true)}
+        >
+          Select category
+        </button>
+      </div>
+      <CategoryPopup
+        open={showPopup}
+        handleClose={handlePopupClose}
+        type="expense_categories"
+        categories={expenseCategories}
+        onSelect={handleCategoryChange}
+        showDelete={false}
+      />
     </div>
   );
 }
