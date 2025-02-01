@@ -24,8 +24,7 @@
 }
   
 .t-table tr:hover {
-  background-color: #636363;
-  color: white;
+  background-color: #91f6ff;
 }
   
 .t-table tr.expense, .t-table tr.settle, .t-table tr.topup {
@@ -41,27 +40,3 @@
   font-weight: bold;
 }
  
-.t-table td[data-full-text]:hover::after {
-  content: attr(data-full-text);
-  position: absolute;
-  left: 50%;
-  bottom: 100%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  background-color: rgba(0, 0, 0, 0.75);
-  color: #fff;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  z-index: 10;
-  max-width: 200px;
-  overflow-wrap: break-word;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-  
-.t-table td[data-full-text]:hover::after {
-  visibility: visible;
-  opacity: 1;
-}
