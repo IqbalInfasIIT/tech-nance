@@ -1,10 +1,11 @@
 .selected-category-container {
   display: flex;
   align-items: center;
-  margin-top: 1vh;
+  justify-content: center;
 }
 
 .selected-category-field {
+  height: 100%;
   flex-grow: 1;
   padding: 1vh;
   border: 0.1vh solid #ccc;
@@ -19,13 +20,14 @@
 }
 
 .selected-category-button {
-  padding: 0.25vh 2vw;
+  height: 100%;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 0.4vh;
   cursor: pointer;
   margin-right: 2%; 
+  box-sizing: border-box;
 }
 
 .selected-category-button:hover {
@@ -33,7 +35,9 @@
 }
 
 .add-category-button {
-  padding: 0.25vh 2vw;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0.5vh 2vw;
   background-color: #00ff04;
   color: white;
   border: none;
