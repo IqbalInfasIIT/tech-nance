@@ -17,9 +17,9 @@ const TransactionsList = ({ transactions }) => {
             </thead>
             <tbody>
                 {transactions.map((transaction, index) => {
-                    const rowClass = transaction.type.toLowerCase(); // Get lowercase type
+                    const rowClass = transaction.type.toLowerCase();
                     return (
-                        <tr key={index} className={rowClass}> {/* Add class to the row */}
+                        <tr key={index} className={rowClass}>
                             <td className="col-date" data-full-text={transaction.date}>{transaction.date}</td>
                             <td className="col-number" data-full-text={transaction.number}>{transaction.number}</td>
                             <td className="col-description" data-full-text={transaction.description}>{transaction.description}</td>

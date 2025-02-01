@@ -15,6 +15,16 @@ exports.getCapitalSources = async (req, res) => {
   }
 };
 
+exports.getAccounts = async (req, res) => {
+  try {
+    const [results] = await sourceService.getAccounts();
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching accounts:', err);
+    res.status(500).send('Error fetching accounts');
+  }
+};
+
 exports.getBankAccounts = async (req, res) => {
   try {
     const [results] = await sourceService.getBankAccounts();

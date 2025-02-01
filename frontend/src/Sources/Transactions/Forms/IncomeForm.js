@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import CategoryPopup from './CategoryComp/CategoryPopup';
-import AddCategoryPopup from './CategoryComp/AddCategoryPopup'; // Import AddCategoryPopup
+import { Link } from 'react-router-dom';
 import './Form.css';
 
-function IncomeForm({ handleInputChange, incomeCategories, addCategory, deleteCategory, incomeMainCategoryCount }) {
+
+function IncomeForm({ handleInputChange, incomeCategories, deleteCategory, incomeMainCategoryCount }) {
   const [showPopup, setShowPopup] = useState(false);
-  const [showAddPopup, setShowAddPopup] = useState(false); // State to handle Add Category Popup
   const [selectedCategory, setSelectedCategory] = useState('');
 
   const handleCategoryChange = (categoryId, categoryName) => {
@@ -16,10 +16,6 @@ function IncomeForm({ handleInputChange, incomeCategories, addCategory, deleteCa
 
   const handlePopupClose = () => {
     setShowPopup(false);
-  };
-
-  const handleAddPopupClose = () => {
-    setShowAddPopup(false);
   };
 
   return (
@@ -33,19 +29,9 @@ function IncomeForm({ handleInputChange, incomeCategories, addCategory, deleteCa
           placeholder="Select a category"
           readOnly
         />
-        <button 
-          type="button" 
-          className="selected-category-button" 
-          onClick={() => setShowPopup(true)}
-        >
-          Select category
-        </button>
-        <button 
-          type="button" 
-          className="add-category-button" 
-          onClick={() => setShowAddPopup(true)}
-        >
-          Add Category
+        <button type="button" className="selected-category-button" onClick={() => setShowPopup(true)}>Select category</button>
+        <button type="button" className="add-category-button">
+          <Link to="/add-category/income_categories">Add Category</Link>
         </button>
       </div>
       <CategoryPopup
@@ -56,13 +42,6 @@ function IncomeForm({ handleInputChange, incomeCategories, addCategory, deleteCa
         onSelect={handleCategoryChange}
         onDelete={(categoryId) => deleteCategory(categoryId, 'income_categories')}
         count={incomeMainCategoryCount}
-      />
-      <AddCategoryPopup
-        open={showAddPopup}
-        handleClose={handleAddPopupClose}
-        type="income_categories"
-        addCategory={addCategory}
-        categories={incomeCategories}
       />
     </div>
   );

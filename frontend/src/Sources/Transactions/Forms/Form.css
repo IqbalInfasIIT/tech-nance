@@ -39,8 +39,21 @@
   border: none;
   border-radius: 0.4vh;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .add-category-button:hover {
   background-color: #005e19;
+}
+
+.add-category-button a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: white;
+  text-decoration: none;
+}
+
+.add-category-button a:hover {
+  color: white;
 }

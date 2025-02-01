@@ -1,25 +1,20 @@
 import React, { useState } from 'react';
 import CategoryPopup from './CategoryComp/CategoryPopup';
-import AddCategoryPopup from './CategoryComp/AddCategoryPopup'; // Import AddCategoryPopup
+import { Link } from 'react-router-dom';
 import './Form.css';
 
-function ExpenseForm({ handleInputChange, expenseCategories, addCategory, deleteCategory, expenseMainCategoryCount }) {
+function ExpenseForm({ handleInputChange, expenseCategories, deleteCategory, expenseMainCategoryCount }) {
   const [showPopup, setShowPopup] = useState(false);
-  const [showAddPopup, setShowAddPopup] = useState(false); // State to handle Add Category Popup
   const [selectedCategory, setSelectedCategory] = useState('');
 
   const handleCategoryChange = (categoryId, categoryName) => {
     setSelectedCategory(categoryName);
     handleInputChange({ target: { name: 'destinationId', value: categoryId } });
-    handleInputChange({ target: { name: 'destinationType', value: 'expense_categories' } });
+    handleInputChange({ target: { name: 'destinationType', value: 'expense_category' } });
   };
 
   const handlePopupClose = () => {
     setShowPopup(false);
-  };
-
-  const handleAddPopupClose = () => {
-    setShowAddPopup(false);
   };
 
   return (
@@ -33,19 +28,9 @@ function ExpenseForm({ handleInputChange, expenseCategories, addCategory, delete
           placeholder="Select a category"
           readOnly
         />
-        <button 
-          type="button" 
-          className="selected-category-button" 
-          onClick={() => setShowPopup(true)}
-        >
-          Select category
-        </button>
-        <button 
-          type="button" 
-          className="add-category-button" 
-          onClick={() => setShowAddPopup(true)}
-        >
-          Add Category
+        <button type="button" className="selected-category-button" onClick={() => setShowPopup(true)}>Select category</button>
+        <button type="button" className="add-category-button">
+          <Link to="/add-category/expense_categories">Add Category</Link>
         </button>
       </div>
       <CategoryPopup
@@ -56,13 +41,6 @@ function ExpenseForm({ handleInputChange, expenseCategories, addCategory, delete
         onSelect={handleCategoryChange}
         onDelete={(categoryId) => deleteCategory(categoryId, 'expense_categories')}
         count={expenseMainCategoryCount}
-      />
-      <AddCategoryPopup
-        open={showAddPopup}
-        handleClose={handleAddPopupClose}
-        type="expense_categories"
-        addCategory={addCategory}
-        categories={expenseCategories}
       />
     </div>
   );

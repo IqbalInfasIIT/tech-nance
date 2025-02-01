@@ -3,19 +3,32 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { addSource, getBankAccounts } from '../Services/SourcesApi';
 import './AddSourceScreen.css';
 
+
 function AddSourceScreen() {
   const { type } = useParams();
   const [name, setName] = useState('');
   const [balance, setBalance] = useState('');
   const [linkedAccountId, setLinkedAccountId] = useState('');
   const [creditLimit, setCreditLimit] = useState('');
+  const [duration, setDuration] = useState(30);
   const [cycleEndDate, setCycleEndDate] = useState('');
+  const [maxDate, setMaxDate] = useState('');
 
   const [isBankAccount, setIsBankAccount] = useState(false);
   const [cardType, setCardType] = useState('debit');
 
   const [bankAccounts, setBankAccounts] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const calculateMaxDate = () => {
+      const currentDate = new Date();
+      currentDate.setDate(currentDate.getDate() + parseInt(duration, 10));
+      return currentDate.toISOString().split('T')[0];
+    };
+
+    setMaxDate(calculateMaxDate());
+  }, [duration]);
 
   useEffect(() => {
     if (type === 'Card' || type === 'Digital') {
@@ -101,6 +114,7 @@ function AddSourceScreen() {
             </label>
           </div>
         )}
+        <label className='main-label'>Name: </label>
         <input
           type="text"
           value={name}
@@ -109,30 +123,37 @@ function AddSourceScreen() {
           required
         />
         {(type === 'Account' || type === 'Voucher' || type === "Gift") && (
-          <input
-            type="number"
-            value={balance}
-            onChange={(e) => setBalance(e.target.value)}
-            placeholder="Initial Balance"
-            required
-          />
+          <>
+            <label className='main-label'>Initial Balance: </label>
+            <input
+              type="number"
+              value={balance}
+              onChange={(e) => setBalance(e.target.value)}
+              placeholder="Initial Balance"
+              required
+            />
+          </>
         )}
         {((type === 'Card' && cardType === 'debit') || type === 'Digital') && (
-          <select
-            value={linkedAccountId}
-            onChange={(e) => setLinkedAccountId(e.target.value)}
-            required
-          >
-            <option value="" disabled>Select Linked Bank Account</option>
-            {bankAccounts.map(account => (
-              <option key={account.source_id} value={account.source_id}>
-                {account.source_name}
-              </option>
-            ))}
-          </select>
+          <>
+            <label className='main-label'>Linked Account: </label>
+            <select
+              value={linkedAccountId}
+              onChange={(e) => setLinkedAccountId(e.target.value)}
+              required
+            >
+              <option value="" disabled>Select Linked Bank Account</option>
+              {bankAccounts.map(account => (
+                <option key={account.source_id} value={account.source_id}>
+                  {account.source_name}
+                </option>
+              ))}
+            </select>
+          </>
         )}
         {(type === 'Card' && cardType === 'credit') && (
           <>
+            <label className='main-label'>Credit Limit: </label>
             <input
               type="number"
               value={creditLimit}
@@ -140,11 +161,21 @@ function AddSourceScreen() {
               placeholder="Credit Limit"
               required
             />
+            <label className='main-label'>Duration: </label>
+            <input 
+              type="number" 
+              value={duration} 
+              onChange={(e) => setDuration(e.target.value)} 
+              required
+            />
+            <label className='main-label'>Next Cycle Date: </label>
             <input
               type="date"
               value={cycleEndDate}
               onChange={(e) => setCycleEndDate(e.target.value)}
               required
+              min={new Date().toISOString().split('T')[0]}
+              max={maxDate}
             />
           </>
         )}

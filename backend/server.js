@@ -18,7 +18,7 @@ app.use('/sources', sourceRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/categories', categoryRoutes);
 
-app.use((err, req, res, next) => {
+app.use((err, res) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });

@@ -63,10 +63,17 @@ CREATE TABLE IF NOT EXISTS monthly_totals (
     PRIMARY KEY (year, month)
 );
 ------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------
+SELECT trigger_name 
+FROM information_schema.triggers
+WHERE trigger_schema = DATABASE();
+------------------------------------------------------------------------------------------------------------------------------------------
+DROP TRIGGER IF EXISTS trigger_name;
+------------------------------------------------------------------------------------------------------------------------------------------
 -- Create trigger for monthly totals
 DELIMITER //
 
-CREATE TRIGGER update_monthly_totals
+CREATE TRIGGER update_monthly_totals_on_insert
 AFTER INSERT ON transactions
 FOR EACH ROW
 BEGIN
@@ -88,6 +95,45 @@ BEGIN
         VALUES (v_year, v_month, NEW.amount)
         ON DUPLICATE KEY UPDATE
             total_expenses = total_expenses + NEW.amount;
+    ELSEIF NEW.type = 'refund' THEN
+        -- Deduct refund amount from both income and expenses
+        UPDATE monthly_totals
+        SET total_expenses = total_expenses - NEW.amount
+        WHERE year = v_year AND month = v_month;
+    END IF;
+END//
+
+DELIMITER ;
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+CREATE TRIGGER update_monthly_totals_after_delete
+AFTER DELETE ON transactions
+FOR EACH ROW
+BEGIN
+    DECLARE v_year INT;
+    DECLARE v_month INT;
+
+    -- Extract the year and month from the transaction date
+    SET v_year = YEAR(OLD.date);
+    SET v_month = MONTH(OLD.date);
+
+    -- Update the monthly totals table based on the type of transaction
+    IF OLD.type = 'income' THEN
+        UPDATE monthly_totals
+        SET total_income = total_income - OLD.amount
+        WHERE year = v_year AND month = v_month;
+    ELSEIF OLD.type = 'expense' THEN
+        UPDATE monthly_totals
+        SET total_expenses = total_expenses - OLD.amount
+        WHERE year = v_year AND month = v_month;
+    ELSEIF OLD.type = 'refund' THEN
+        -- Increment the expenses only
+        UPDATE monthly_totals
+        SET total_expenses = total_expenses + OLD.amount
+        WHERE year = v_year AND month = v_month;
     END IF;
 END//
 

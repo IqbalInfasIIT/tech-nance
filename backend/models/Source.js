@@ -8,6 +8,11 @@ class Source {
     return this.db.promise().query(query);
   }
 
+  async getAccounts() {
+    const query = 'SELECT * FROM capital_sources WHERE source_type = "Account" AND isActive = TRUE';
+    return this.db.promise().query(query);
+  }
+
   async getBankAccounts() {
     const query = 'SELECT * FROM capital_sources WHERE is_bank_account = TRUE AND isActive = TRUE';
     return this.db.promise().query(query);

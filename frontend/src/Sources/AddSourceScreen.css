@@ -1,5 +1,6 @@
 .add-source-container {
-  margin: 2vh;
+  margin: 4vh;
+  margin: auto;
 }
 
 .add-source-container h2 {
@@ -7,26 +8,31 @@
   font-size: 3vh;
 }
 
+.main-label{
+  font-weight: bold;
+  font-size: large;
+}
+
 .add-source-form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2vh; /* Added more gap for better spacing */
+  gap: 2vh;
 }
 
 .add-source-form input, .add-source-form button, .add-source-form select {
   width: 80%;
-  padding: 1.5vh;
+  padding: 2vh 2vw;
   margin-bottom: 1.5vh;
   border: 0.1vh solid #ccc;
   border-radius: 0.5vh;
-  font-size: 1.5vh; /* Adjusted font size */
-  box-sizing: border-box; /* Include padding and border in element's total width and height */
+  font-size: 2vh;
+  box-sizing: border-box;
 }
 
 .add-source-form label {
   margin-right: 2vh;
-  font-size: 1.5vh;
+  font-size: 3vh;
 }
 
 .add-source-form button {
@@ -37,8 +43,8 @@
   transition: background-color 0.3s;
   width: auto;
   height: auto;
-  font-size: 1.5vh; /* Adjusted font size */
-  padding: 1.5vh 3vh; /* Adjusted padding */
+  font-size: 1.5vh;
+  padding: 1.5vh 3vh;
 }
 
 .add-source-form button:hover {

@@ -8,7 +8,8 @@ import SettleForm from './Forms/SettleForm';
 import AmountInput from './Components/AmountInputView';
 
 function MainTransactionForm({ 
-  selectedType, formData, handleInputChange, handleFormSubmit, incomeCategories, expenseCategories, accounts, wallets, creditCards, addCategory, deleteCategory, incomeMainCategoryCount, expenseMainCategoryCount
+  selectedType, formData, handleInputChange, handleFormSubmit, incomeCategories, expenseCategories, accounts, wallets, creditCards, addCategory, deleteCategory, 
+  incomeMainCategoryCount, expenseMainCategoryCount, sourceId
 }) {
   const [amount, setAmount] = useState('');
   const [amountError, setAmountError] = useState('');
@@ -62,7 +63,7 @@ function MainTransactionForm({
             formData={formData} 
             handleInputChange={handleInputChange} 
             accounts={accounts} 
-            wallets={wallets} 
+            sourceId={sourceId}
           />
         )}
         {selectedType === 'expense' && (

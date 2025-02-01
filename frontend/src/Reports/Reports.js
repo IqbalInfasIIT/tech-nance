@@ -3,36 +3,43 @@ import IncomeComponent from './Components/IncomeComponent';
 import ExpenseComponent from './Components/ExpenseComponent';
 import PeriodSelector from './Components/PeriodSelector';
 import TransactionsList from './Components/TransactionsList';
-import { getTotalIncome, getIncomeBreakdown, getTotalExpense, getExpenseBreakdown, getMonthlyTotals, getAllTransactionsWithNames } from '../Services/TransactionsApi';
+import { getIncomeBreakdown, getExpenseBreakdown, getMonthlyTotals, getAllTransactionsWithNames } from '../Services/TransactionsApi';
 import CustomLineChart from './Components/CustomLineChart';
 import './Reports.css';
 
 const Reports = () => {
-  const [period, setPeriod] = useState('2025-01'); // Default period (YYYY-MM)
+  const [period, setPeriod] = useState('2025-01');
   const [totalIncome, setTotalIncome] = useState(0);
   const [incomeBreakdown, setIncomeBreakdown] = useState([]);
   const [totalExpense, setTotalExpense] = useState(0);
   const [expenseBreakdown, setExpenseBreakdown] = useState([]);
   const [monthlyTotals, setMonthlyTotals] = useState([]);
-  const [transactions, setTransactions] = useState([]); // New state for transactions
+  const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const income = await getTotalIncome(period);
-        setTotalIncome(income.total_income);
+        const monthlyTotalsData = await getMonthlyTotals();
+        setMonthlyTotals(monthlyTotalsData);
+        
+        const currentMonthTotals = monthlyTotalsData.find(item => {
+          const formattedPeriod = `${item.year}-${String(item.month).padStart(2, '0')}`;
+          return formattedPeriod === period;
+        });
+
+        if (currentMonthTotals) {
+          setTotalIncome(currentMonthTotals.total_income);
+          setTotalExpense(currentMonthTotals.total_expenses);
+        } else {
+          setTotalIncome(0);
+          setTotalExpense(0);
+        }
 
         const incomeBreakdownData = await getIncomeBreakdown(period);
         setIncomeBreakdown(incomeBreakdownData);
 
-        const expense = await getTotalExpense(period);
-        setTotalExpense(expense.total_expense);
-
         const expenseBreakdownData = await getExpenseBreakdown(period);
         setExpenseBreakdown(expenseBreakdownData);
-
-        const monthlyTotalsData = await getMonthlyTotals();
-        setMonthlyTotals(monthlyTotalsData);
 
         const transactionsData = await getAllTransactionsWithNames();
         setTransactions(transactionsData);
@@ -46,9 +53,9 @@ const Reports = () => {
 
   const netBalance = totalIncome - totalExpense;
   const balanceMessage = netBalance > 0 ? 'Saved:' : netBalance < 0 ? 'Overspent by:' : 'Balanced';
-  const formattedNetBalance = new Intl.NumberFormat(undefined, { 
-    minimumFractionDigits: 2, 
-    maximumFractionDigits: 2 
+  const formattedNetBalance = new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   }).format(Math.abs(netBalance));
   const balanceClass = netBalance > 0 ? 'saved' : netBalance < 0 ? 'overspent' : 'balanced';
 

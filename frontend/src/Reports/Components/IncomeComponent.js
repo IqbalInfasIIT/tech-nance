@@ -6,45 +6,41 @@ import './IncExpComponent.css';
 const IncomeComponent = ({ totalIncome, breakdown = [] }) => {
   const [showPopup, setShowPopup] = useState(false);
 
-  const validBreakdown = Array.isArray(breakdown) ? breakdown : [];
-  const top4Categories = validBreakdown.slice(0, 4);
-  const otherCategoriesTotal = validBreakdown.slice(4).reduce((acc, item) => acc + (parseFloat(item.total_amount) || 0), 0);
+  const top4Categories = breakdown.slice(0, 4);
+  const otherCategoriesTotal = breakdown.slice(4).reduce((acc, item) => acc + parseFloat(item.total_amount || 0), 0);
 
-  const data = top4Categories.map(item => parseFloat(item.total_amount));
-  if (otherCategoriesTotal > 0) {
-    data.push(otherCategoriesTotal);
-  }
+  const data = [
+    ...top4Categories.map(item => parseFloat(item.total_amount || 0)),
+    ...(otherCategoriesTotal > 0 ? [otherCategoriesTotal] : [])
+  ];
 
-  const labels = top4Categories.map(item => item.category_name);
-  if (otherCategoriesTotal > 0) {
-    labels.push('Other');
-  }
-
-  const handleButtonClick = () => {
-    setShowPopup(true);
-  };
-
-  const handleClosePopup = () => {
-    setShowPopup(false);
-  };
+  const labels = [
+    ...top4Categories.map(item => {
+      const amount = parseFloat(item.total_amount || 0);
+      return amount > 0 ? item.main_category_name : null;
+    }).filter(label => label !== null),
+    ...(otherCategoriesTotal > 0 ? ['Other'] : [])
+  ];
 
   return (
-    <div className="IncExp-component"> {/* Add 'income' class */}
-      <h3 className="total-value">Total Income: {new Intl.NumberFormat(undefined, { 
-    minimumFractionDigits: 2, 
-    maximumFractionDigits: 2 
-  }).format(totalIncome)}</h3>
+    <div className="IncExp-component">
+      <h3 className="total-value">
+        Total Income: {new Intl.NumberFormat(undefined, { 
+          minimumFractionDigits: 2, 
+          maximumFractionDigits: 2 
+        }).format(totalIncome)}
+      </h3>
       <div className="pie-chart-container">
         <CustomPieChart data={data} labels={labels} />
       </div>
-      <button className="details-button" onClick={handleButtonClick}>
+      <button className="details-button" onClick={() => setShowPopup(true)}>
         View Details
       </button>
       <PopupDisplay
         show={showPopup}
-        handleClose={handleClosePopup}
+        handleClose={() => setShowPopup(false)}
         title="Income Breakdown"
-        breakdown={validBreakdown}
+        breakdown={breakdown}
       />
     </div>
   );

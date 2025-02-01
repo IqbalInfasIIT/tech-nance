@@ -148,9 +148,9 @@ exports.getTransactionById = async (req, res) => {
 exports.getTotalIncome = async (req, res) => {
   try {
     const period = req.query.period;
-    console.log('getTotalIncome called with period:', period); // Log the period
+    console.log('getTotalIncome called with period:', period);
     const [results] = await transactionService.getTotalIncome(period);
-    console.log('Total Income Results:', results); // Log the results
+    console.log('Total Income Results:', results);
     res.json(results[0]);
   } catch (err) {
     console.error('Error fetching total income:', err);
@@ -161,9 +161,9 @@ exports.getTotalIncome = async (req, res) => {
 exports.getIncomeBreakdown = async (req, res) => {
   try {
     const period = req.query.period;
-    console.log('getIncomeBreakdown called with period:', period); // Log the period
+    console.log('getIncomeBreakdown called with period:', period);
     const [results] = await transactionService.getIncomeBreakdown(period);
-    console.log('Income Breakdown Results:', results); // Log the results
+    console.log('Income Breakdown Results:', results);
     res.json(results);
   } catch (err) {
     console.error('Error fetching income breakdown:', err);
@@ -174,9 +174,9 @@ exports.getIncomeBreakdown = async (req, res) => {
 exports.getTotalExpense = async (req, res) => {
   try {
     const period = req.query.period;
-    console.log('getTotalExpense called with period:', period); // Log the period
+    console.log('getTotalExpense called with period:', period);
     const [results] = await transactionService.getTotalExpense(period);
-    console.log('Total Expense Results:', results); // Log the results
+    console.log('Total Expense Results:', results);
     res.json(results[0]);
   } catch (err) {
     console.error('Error fetching total expense:', err);

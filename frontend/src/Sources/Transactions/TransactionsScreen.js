@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { getSourceById, getBankAccounts, getDigitalWallets, getCreditCards } from '../../Services/SourcesApi';
+import { getSourceById, getAccountSources, getDigitalWallets, getCreditCards } from '../../Services/SourcesApi';
 import { getMainCategories, addCategory, deleteCategory, getMainCategoryCount } from '../../Services/CategoryApi';
 import { addTransaction } from '../../Services/TransactionsApi';
 import './TransactionsScreen.css';
@@ -50,7 +50,7 @@ function TransactionScreen() {
         ] = await Promise.all([
           getMainCategories('income_categories'),
           getMainCategories('expense_categories'),
-          getBankAccounts(),
+          getAccountSources(),
           getDigitalWallets(),
           getCreditCards(),
           getMainCategoryCount('income_categories'),
@@ -132,18 +132,13 @@ function TransactionScreen() {
   };
 
   const handleAddCategory = async (category, type) => {
+    let typeALT = type === 'income_categories' ? 'Income' : 'Expense';
     try {
       await addCategory(category, type);
-      if (type === 'income_categories') {
-        setIncomeCategories([...incomeCategories, category]);
-      } else {
-        setExpenseCategories([...expenseCategories, category]);
-      }
-
-      alert(`${type.slice(0, -10)} category added successfully.`);
+      alert(`${typeALT} category added successfully.`);
     } catch (error) {
-      console.error(`Error adding ${type.slice(0, -10)} category:`, error);
-      alert(`Error adding ${type.slice(0, -10)} category. Please try again.`);
+      console.error(`Error adding ${typeALT} category:`, error);
+      alert(`Error adding ${typeALT} category. Please try again.`);
     }
   };
 
@@ -183,6 +178,7 @@ function TransactionScreen() {
         handleFormSubmit={handleFormSubmit}
         incomeCategories={incomeCategories}
         expenseCategories={expenseCategories}
+        sourceId={sourceId}
         accounts={accounts}
         wallets={wallets}
         creditCards={creditCards}

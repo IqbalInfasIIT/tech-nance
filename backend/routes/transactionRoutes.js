@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const transactionController = require('../controllers/transactionController');
 
-// Routes for fetching data
 router.get('/get-transactions', transactionController.getAllTransactions);
 router.get('/total-income', transactionController.getTotalIncome);
 router.get('/income-breakdown', transactionController.getIncomeBreakdown);

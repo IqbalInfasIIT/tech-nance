@@ -66,39 +66,33 @@ class Transaction {
     const query = 'SELECT * FROM transactions WHERE transaction_id = ?';
     return this.db.promise().query(query, [transactionId]);
   }
-
-  async getTotalIncome(period) {
-    const query = 'SELECT SUM(amount) AS total_income FROM transactions WHERE type = "income" AND DATE_FORMAT(date, "%Y-%m") = ?';
-    return this.db.promise().query(query, [period]);
-  }
-  
+ 
   async getIncomeBreakdown(period) {
     const query = `
-      SELECT ic.category_name, SUM(t.amount) AS total_amount 
-      FROM transactions t
-      JOIN income_categories ic ON t.destination_id = ic.category_id
-      WHERE t.type = "income" AND DATE_FORMAT(t.date, "%Y-%m") = ?
-      GROUP BY ic.category_name 
-      ORDER BY total_amount DESC 
-      LIMIT 4
+        SELECT pc.category_name AS main_category_name, 
+            SUM(t.amount) AS total_amount 
+        FROM transactions t
+        JOIN income_categories sc ON t.destination_id = sc.category_id
+        LEFT JOIN income_categories pc ON sc.parent_category_id = pc.category_id
+        WHERE t.type = 'income' 
+        AND DATE_FORMAT(t.date, "%Y-%m") = ?
+        GROUP BY pc.category_name 
+        ORDER BY total_amount DESC;
     `;
     return this.db.promise().query(query, [period]);
   }
-  
-  async getTotalExpense(period) {
-    const query = 'SELECT SUM(amount) AS total_expense FROM transactions WHERE type IN ("expense", "refund") AND DATE_FORMAT(date, "%Y-%m") = ?';
-    return this.db.promise().query(query, [period]);
-  }
-  
+ 
   async getExpenseBreakdown(period) {
     const query = `
-      SELECT ec.category_name, SUM(t.amount) AS total_amount 
-      FROM transactions t
-      JOIN expense_categories ec ON t.destination_id = ec.category_id
-      WHERE t.type IN ("expense", "refund") AND DATE_FORMAT(t.date, "%Y-%m") = ?
-      GROUP BY ec.category_name 
-      ORDER BY total_amount DESC 
-      LIMIT 4
+        SELECT pc.category_name AS main_category_name, 
+            SUM(CASE WHEN t.type = 'expense' THEN t.amount ELSE 0 END) 
+            - SUM(CASE WHEN t.type = 'refund' THEN t.amount ELSE 0 END) AS total_amount 
+        FROM transactions t
+        JOIN expense_categories sc ON t.destination_id = sc.category_id
+        LEFT JOIN expense_categories pc ON sc.parent_category_id = pc.category_id
+        WHERE DATE_FORMAT(t.date, "%Y-%m") = ?
+        GROUP BY pc.category_name 
+        ORDER BY total_amount DESC;
     `;
     return this.db.promise().query(query, [period]);
   }

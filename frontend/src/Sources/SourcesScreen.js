@@ -70,9 +70,7 @@ function SourcesScreen() {
           </div>
         </div>
       </div>
-
       <div className="right-panel">
-
         <div className="main-card">
           <h3>Cards</h3>
           <div className="item-list">
