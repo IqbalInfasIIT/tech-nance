@@ -10,16 +10,16 @@ USE techNanceDB;
 -- Create capital_sources table
 CREATE TABLE capital_sources (
     source_id INT AUTO_INCREMENT PRIMARY KEY,
-    source_type ENUM('Account', 'Card', 'Digital', 'Gift') NOT NULL,
+    source_type ENUM('Account') NOT NULL,
     source_name VARCHAR(255) NOT NULL UNIQUE,
     balance DECIMAL(10, 2) NOT NULL DEFAULT 0,
-    linked_account_id INT DEFAULT NULL,
+    is_Active BOOLEAN DEFAULT TRUE,
     is_bank_account BOOLEAN DEFAULT FALSE,
-    credit_limit DECIMAL(10, 2) DEFAULT NULL,
-    cycle_end_date DATE DEFAULT NULL,
-    isActive BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (linked_account_id) REFERENCES capital_sources(source_id)
+    bank_number VARCHAR(50) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
 ------------------------------------------------------------------------------------------------------------------------------------------
 -- Create income categories table
 CREATE TABLE IF NOT EXISTS income_categories (
@@ -43,15 +43,15 @@ CREATE TABLE IF NOT EXISTS expense_categories (
 CREATE TABLE IF NOT EXISTS transactions (
   transaction_id INT AUTO_INCREMENT PRIMARY KEY,
   date DATE NOT NULL,
-  number VARCHAR(255) NOT NULL,
+  number VARCHAR(10) NOT NULL,
   description VARCHAR(255) NOT NULL,
-  type ENUM('transfer', 'income', 'expense', 'refund', 'topup', 'settle') NOT NULL,
+  type ENUM('transfer', 'income', 'expense', 'refund') NOT NULL,
   amount DECIMAL(10, 2) NOT NULL,
   source_id INT NOT NULL,
   source_type ENUM('source', 'income_category', 'expense_category') NOT NULL,
   destination_id INT DEFAULT NULL,
   destination_type ENUM('source', 'income_category', 'expense_category') DEFAULT NULL,
-  payment_method ENUM('Transfer', 'Cash', 'Debit', 'Credit', 'Digital', 'Voucher') DEFAULT NULL
+  payment_method ENUM('Transfer', 'Cash') DEFAULT NULL
 );
 ------------------------------------------------------------------------------------------------------------------------------------------
 -- Create monthly totals table

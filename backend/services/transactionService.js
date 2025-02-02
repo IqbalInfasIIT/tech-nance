@@ -23,16 +23,8 @@ class TransactionService {
     return this.transactionModel.getById(transactionId);
   }
 
-  async getTotalIncome(period) {
-    return this.transactionModel.getTotalIncome(period);
-  }
-
   async getIncomeBreakdown(period) {
     return this.transactionModel.getIncomeBreakdown(period);
-  }
-
-  async getTotalExpense(period) {
-    return this.transactionModel.getTotalExpense(period);
   }
 
   async getExpenseBreakdown(period) {

@@ -12,13 +12,15 @@ class Transaction {
     const query = `
       SELECT 
           t.transaction_id,
-          DATE(t.date) AS date,  -- Extract only the date part
+          DATE(t.date) AS date,
           t.number,
           t.description,
           t.type,
           COALESCE(cs.source_name, ic.category_name, ec.category_name) AS source_name,
           COALESCE(cs2.source_name, ic2.category_name, ec2.category_name) AS destination_name,
-          t.amount
+          t.amount,
+          t.source_type,
+          t.destination_type
       FROM 
           transactions t
       LEFT JOIN 
@@ -38,6 +40,8 @@ class Transaction {
     `;
     return this.db.promise().query(query);
   }
+  
+  
 
   async add(transaction) {
     const query = `INSERT INTO transactions (date, number, description, type, amount, source_id, source_type, destination_id, destination_type, payment_method) 

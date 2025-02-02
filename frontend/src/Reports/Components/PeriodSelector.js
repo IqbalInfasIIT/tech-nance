@@ -10,6 +10,7 @@ const PeriodSelector = ({ period, setPeriod }) => {
     <div className="period-selector">
       <label htmlFor="period">Select Period: </label>
       <select id="period" value={period} onChange={handlePeriodChange}>
+        <option value="2025-02">Feb 2025</option>
         <option value="2025-01">Jan 2025</option>
         <option value="2024-12">Dec 2024</option>
         <option value="2024-11">Nov 2024</option>

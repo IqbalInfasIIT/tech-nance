@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import IncomeForm from './Forms/IncomeForm';
 import TransferForm from './Forms/TransferForm';
 import ExpenseForm from './Forms/ExpenseForm';
-import TopupForm from './Forms/TopupForm';
 import RefundForm from './Forms/RefundForm';
-import SettleForm from './Forms/SettleForm';
 import AmountInput from './Components/AmountInputView';
 
 function MainTransactionForm({ 
-  selectedType, formData, handleInputChange, handleFormSubmit, incomeCategories, expenseCategories, accounts, wallets, creditCards, addCategory, deleteCategory, 
+  selectedType, formData, handleInputChange, handleFormSubmit, incomeCategories, expenseCategories, accounts, addCategory, deleteCategory, 
   incomeMainCategoryCount, expenseMainCategoryCount, sourceId
 }) {
   const [amount, setAmount] = useState('');
@@ -42,7 +40,7 @@ function MainTransactionForm({
         </div>
         <div className="form-group">
           <label htmlFor="number">Number:</label>
-          <input type="text" id="number" name="number" value={formData.number} onChange={handleInputChange} required />
+          <input type="text" id="number" name="number" value={formData.number} onChange={handleInputChange} maxLength={10} required />
         </div>
         <div className="form-group">
           <label htmlFor="description">Description:</label>
@@ -76,25 +74,11 @@ function MainTransactionForm({
             expenseMainCategoryCount={expenseMainCategoryCount}
           />
         )}
-        {selectedType === 'topup' && (
-          <TopupForm 
-            formData={formData} 
-            handleInputChange={handleInputChange} 
-            wallets={wallets} 
-          />
-        )}
         {selectedType === 'refund' && (
           <RefundForm 
             formData={formData} 
             handleInputChange={handleInputChange} 
             expenseCategories={expenseCategories} 
-          />
-        )}
-        {selectedType === 'settle' && (
-          <SettleForm 
-            formData={formData} 
-            handleInputChange={handleInputChange} 
-            creditCards={creditCards} 
           />
         )}
         <div className="form-group full-width">

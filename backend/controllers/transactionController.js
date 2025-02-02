@@ -36,7 +36,7 @@ exports.addTransaction = async (req, res) => {
       date: new Date().toISOString().split('T')[0],
       number: 'N/A',
       description: 'No description provided',
-      type: 'income',
+      type: 'transfer',
       amount: '0.00',
       sourceId: '0',
       sourceType: 'source',
@@ -65,26 +65,15 @@ exports.addTransaction = async (req, res) => {
       case 'refund':
         await sourceModel.incrementBalance(finalTransaction.sourceId, finalTransaction.amount);
         break;
-      case 'topup':
-        await sourceModel.decrementBalance(finalTransaction.sourceId, finalTransaction.amount);
-        await sourceModel.incrementBalance(finalTransaction.destinationId, finalTransaction.amount);
-        break;
-      case 'settle':
-        await sourceModel.decrementBalance(finalTransaction.sourceId, finalTransaction.amount);
-        await sourceModel.incrementBalance(finalTransaction.destinationId, finalTransaction.amount);
-        break;
       default:
         break;
     }
     
-    console.log('half');
     res.status(201).json({ message: 'Transaction added successfully!' });
   } catch (err) {
     console.error('Error adding transaction:', err);
     res.status(500).json({ message: 'Error adding transaction' });
   }
-
-  console.log('complete');
 };
 
 
@@ -114,14 +103,6 @@ exports.deleteTransaction = async (req, res) => {
       case 'refund':
         await sourceModel.decrementBalance(transaction.sourceId, transaction.amount);
         break;
-      case 'topup':
-        await sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
-        await sourceModel.decrementBalance(transaction.destinationId, transaction.amount);
-        break;
-      case 'settle':
-        await sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
-        await sourceModel.decrementBalance(transaction.destinationId, transaction.amount);
-        break;
       default:
         break;
     }
@@ -145,19 +126,6 @@ exports.getTransactionById = async (req, res) => {
   }
 };
 
-exports.getTotalIncome = async (req, res) => {
-  try {
-    const period = req.query.period;
-    console.log('getTotalIncome called with period:', period);
-    const [results] = await transactionService.getTotalIncome(period);
-    console.log('Total Income Results:', results);
-    res.json(results[0]);
-  } catch (err) {
-    console.error('Error fetching total income:', err);
-    res.status(500).send('Error fetching total income');
-  }
-};
-
 exports.getIncomeBreakdown = async (req, res) => {
   try {
     const period = req.query.period;
@@ -168,19 +136,6 @@ exports.getIncomeBreakdown = async (req, res) => {
   } catch (err) {
     console.error('Error fetching income breakdown:', err);
     res.status(500).send('Error fetching income breakdown');
-  }
-};
-
-exports.getTotalExpense = async (req, res) => {
-  try {
-    const period = req.query.period;
-    console.log('getTotalExpense called with period:', period);
-    const [results] = await transactionService.getTotalExpense(period);
-    console.log('Total Expense Results:', results);
-    res.json(results[0]);
-  } catch (err) {
-    console.error('Error fetching total expense:', err);
-    res.status(500).send('Error fetching total expense');
   }
 };
 

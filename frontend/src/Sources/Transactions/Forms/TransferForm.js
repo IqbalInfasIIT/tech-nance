@@ -15,7 +15,7 @@ function TransferForm({ formData, handleInputChange, accounts, sourceId }) {
         {accounts.map(account => (
           String(account.source_id) !== String(sourceId) && (
             <option key={account.source_id} value={account.source_id}>
-              Bank: {account.source_name}
+              {account.is_bank_account ? 'Bank' : 'Cash'}: {account.source_name}
             </option>
           )
         ))}

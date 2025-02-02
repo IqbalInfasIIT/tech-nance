@@ -8,7 +8,7 @@ import CustomLineChart from './Components/CustomLineChart';
 import './Reports.css';
 
 const Reports = () => {
-  const [period, setPeriod] = useState('2025-01');
+  const [period, setPeriod] = useState('2025-02');
   const [totalIncome, setTotalIncome] = useState(0);
   const [incomeBreakdown, setIncomeBreakdown] = useState([]);
   const [totalExpense, setTotalExpense] = useState(0);

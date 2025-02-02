@@ -15,66 +15,6 @@ exports.getCapitalSources = async (req, res) => {
   }
 };
 
-exports.getAccounts = async (req, res) => {
-  try {
-    const [results] = await sourceService.getAccounts();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching accounts:', err);
-    res.status(500).send('Error fetching accounts');
-  }
-};
-
-exports.getBankAccounts = async (req, res) => {
-  try {
-    const [results] = await sourceService.getBankAccounts();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching bank accounts:', err);
-    res.status(500).send('Error fetching bank accounts');
-  }
-};
-
-exports.getDigitalWallets = async (req, res) => {
-  try {
-    const [results] = await sourceService.getDigitalWallets();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching digital wallets:', err);
-    res.status(500).send('Error fetching digital wallets');
-  }
-};
-
-exports.getCards = async (req, res) => {
-  try {
-    const [results] = await sourceService.getCards();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching cards:', err);
-    res.status(500).send('Error fetching cards');
-  }
-};
-
-exports.getCreditCards = async (req, res) => {
-  try {
-    const [results] = await sourceService.getCreditCards();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching cards:', err);
-    res.status(500).send('Error fetching credit cards');
-  }
-};
-
-exports.getGifts = async (req, res) => {
-  try {
-    const [results] = await sourceService.getGifts();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching gifts:', err);
-    res.status(500).send('Error fetching gifts');
-  }
-};
-
 exports.addCapitalSource = async (req, res) => {
   try {
     await sourceService.addSource(req.body);
@@ -98,7 +38,7 @@ exports.deleteCapitalSource = async (req, res) => {
 exports.getSourceById = async (req, res) => {
   try {
     const sourceId = req.params.sourceId;
-    const [results] = await sourceService.getSourceById(sourceId);
+    const [results] = await sourceService.getByIdSource(sourceId);
     res.json(results[0]);
   } catch (err) {
     console.error('Error fetching source details:', err);

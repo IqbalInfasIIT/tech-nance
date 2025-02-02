@@ -24,8 +24,14 @@ const TransactionsList = ({ transactions }) => {
                             <td className="col-number" data-full-text={transaction.number}>{transaction.number}</td>
                             <td className="col-description" data-full-text={transaction.description}>{transaction.description}</td>
                             <td className="col-type" data-full-text={transaction.type}>{transaction.type}</td>
-                            <td className="col-from" data-full-text={transaction.source_name}>{transaction.source_name}</td>
-                            <td className="col-to" data-full-text={transaction.destination_name}>{transaction.destination_name}</td>
+                            <td className="col-from" data-full-text={transaction.source_name}>
+                                {transaction.source_type === 'source' ? 'Account: ' : null}
+                                {transaction.source_name}
+                            </td>
+                            <td className="col-to" data-full-text={transaction.destination_name}>
+                                {transaction.destination_type === 'source' ? 'Account: ' : null}
+                                {transaction.destination_name}
+                            </td>
                             <td className="col-amount" data-full-text={transaction.amount}>{transaction.amount}</td>
                         </tr>
                     );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { getSourceById, getAccountSources, getDigitalWallets, getCreditCards } from '../../Services/SourcesApi';
+import { getSourceById, getSources } from '../../Services/SourcesApi';
 import { getMainCategories, addCategory, deleteCategory, getMainCategoryCount } from '../../Services/CategoryApi';
 import { addTransaction } from '../../Services/TransactionsApi';
 import './TransactionsScreen.css';
@@ -11,7 +11,6 @@ const initialFormData = {
   date: '',
   number: '',
   description: '',
-  type: '',
   amount: '',
   sourceId: '',
   sourceType: '',
@@ -28,8 +27,6 @@ function TransactionScreen() {
   const [incomeCategories, setIncomeCategories] = useState([]);
   const [expenseCategories, setExpenseCategories] = useState([]);
   const [accounts, setAccounts] = useState([]);
-  const [wallets, setWallets] = useState([]);
-  const [creditCards, setCreditCards] = useState([]);
   const [incomeMainCategoryCount, setIncomeMainCategoryCount] = useState(0);
   const [expenseMainCategoryCount, setExpenseMainCategoryCount] = useState(0);
 
@@ -43,16 +40,12 @@ function TransactionScreen() {
           incomeCats,
           expenseCats,
           bankAccounts,
-          digitalWallets,
-          creditCards,
           incomeCategoryCount,
           expenseCategoryCount
         ] = await Promise.all([
           getMainCategories('income_categories'),
           getMainCategories('expense_categories'),
-          getAccountSources(),
-          getDigitalWallets(),
-          getCreditCards(),
+          getSources(),
           getMainCategoryCount('income_categories'),
           getMainCategoryCount('expense_categories')
         ]);
@@ -60,8 +53,6 @@ function TransactionScreen() {
         setIncomeCategories(incomeCats);
         setExpenseCategories(expenseCats);
         setAccounts(bankAccounts);
-        setWallets(digitalWallets);
-        setCreditCards(creditCards);
         setIncomeMainCategoryCount(incomeCategoryCount.mainCategoryCount);
         setExpenseMainCategoryCount(expenseCategoryCount.mainCategoryCount);
       } catch (error) {
@@ -79,14 +70,6 @@ function TransactionScreen() {
     if (source) {
       if (source.is_bank_account) {
         paymentMethod = 'Transfer';
-      } else if (source.source_type === 'Digital') {
-        paymentMethod = 'Digital';
-      } else if (source.source_type === 'Card' && source.linked_account_id !== null) {
-        paymentMethod = 'Debit';
-      } else if (source.cycle_end_date) {
-        paymentMethod = 'Credit';
-      } else if (source.source_type === 'Gift') {
-        paymentMethod = 'Voucher';
       } else {
         paymentMethod = 'Cash';
       }
@@ -180,8 +163,6 @@ function TransactionScreen() {
         expenseCategories={expenseCategories}
         sourceId={sourceId}
         accounts={accounts}
-        wallets={wallets}
-        creditCards={creditCards}
         addCategory={handleAddCategory}
         deleteCategory={handleDeleteCategory}
         incomeMainCategoryCount={incomeMainCategoryCount}

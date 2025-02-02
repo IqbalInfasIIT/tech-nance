@@ -1,35 +1,52 @@
+C:.
+|   .gitattributes
+|   .gitignore
+|   folder_structure.txt
+|   output.txt
+|   package-lock.json
+|   package.json
+|   README.md
+|   testing.txt
+|   txt1
+|   
++---.vscode
+|       settings.json
+|       
 +---backend
+|   |   .gitignore
+|   |   package-lock.json
+|   |   package.json
 |   |   server.js
+|   |   
 |   +---controllers
 |   |       categoryController.js
 |   |       sourceController.js
 |   |       transactionController.js
+|   |       
 |   +---database
 |   |       db.js
+|   |       
 |   +---models
 |   |       Category.js
 |   |       Source.js
 |   |       Transaction.js
+|   |       
 |   +---routes
 |   |       categoryRoutes.js
 |   |       sourceRoutes.js
 |   |       transactionRoutes.js
+|   |       
 |   \---services
 |           categoryService.js
 |           sourceService.js
 |           transactionService.js
+|           
 +---frontend
 |   |   .gitignore
 |   |   package-lock.json
 |   |   package.json
 |   |   README.md
-+---public
-|   |       favicon.ico
-|   |       index.html
-|   |       logo192.png
-|   |       logo512.png
-|   |       manifest.json
-|   |       robots.txt
+|   |   
 |   \---src
 |       |   App.css
 |       |   App.js
@@ -39,11 +56,14 @@
 |       |   logo.svg
 |       |   reportWebVitals.js
 |       |   setupTests.js
+|       |   
 |       +---Budgets
 |       |       Budgets.js
+|       |       
 |       +---Reports
 |       |   |   Reports.css
 |       |   |   Reports.js
+|       |   |   
 |       |   \---Components
 |       |           CustomLineChart.css
 |       |           CustomLineChart.js
@@ -57,24 +77,28 @@
 |       |           PopupDisplay.js
 |       |           TransactionsList.css
 |       |           TransactionsList.js
+|       |           
 |       +---Services
 |       |       CategoryApi.js
 |       |       SourcesApi.js
 |       |       TransactionsApi.js
+|       |       
 |       \---Sources
 |           |   AddSourceScreen.css
 |           |   AddSourceScreen.js
 |           |   SourcesScreen.css
 |           |   SourcesScreen.js
+|           |   
 |           \---Transactions
 |               |   MainTransactionForm.js
 |               |   TransactionsScreen.css
 |               |   TransactionsScreen.js
+|               |   
 |               +---Components
 |               |       AmountInputView.js
-|               |       SelectedAccount.js
 |               |       TransactionTypesView.css
 |               |       TransactionTypesView.js
+|               |       
 |               \---Forms
 |                   |   ExpenseForm.js
 |                   |   Form.css
@@ -83,8 +107,10 @@
 |                   |   SettleForm.js
 |                   |   TopupForm.js
 |                   |   TransferForm.js
+|                   |   
 |                   \---CategoryComp
-|                           AddCategoryPopup.css
-|                           AddCategoryPopup.js
+|                           AddCategoryScreen.css
+|                           AddCategoryScreen.js
 |                           CategoryPopup.css
 |                           CategoryPopup.js
+|                           

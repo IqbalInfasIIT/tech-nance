@@ -8,7 +8,7 @@
   font-size: 3vh;
 }
 
-.main-label{
+.main-label {
   font-weight: bold;
   font-size: large;
 }
@@ -51,6 +51,6 @@
   background-color: #0056b3;
 }
 
-.select-radio{
+.select-radio {
   display: flex;
 }

@@ -1,8 +1,4 @@
-import axios from 'axios';
-
-const api = axios.create({
-  baseURL: 'http://localhost:3001',
-});
+import api from './api';
 
 export const getTransactions = async () => {
   try {
@@ -44,32 +40,12 @@ export const addTransaction = async (transaction) => {
   }
 };
 
-export const getTotalIncome = async (period) => {
-  try {
-    const response = await api.get('/transactions/total-income', { params: { period } });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching total income:', error);
-    throw error;
-  }
-};
-
 export const getIncomeBreakdown = async (period) => {
   try {
     const response = await api.get('/transactions/income-breakdown', { params: { period } });
     return response.data;
   } catch (error) {
     console.error('Error fetching income breakdown:', error);
-    throw error;
-  }
-};
-
-export const getTotalExpense = async (period) => {
-  try {
-    const response = await api.get('/transactions/total-expense', { params: { period } });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching total expense:', error);
     throw error;
   }
 };
