@@ -1,13 +1,8 @@
-const db = require('../database/db');
-const Source = require('../models/Source');
-const SourceService = require('../services/sourceService');
-
-const sourceModel = new Source(db);
-const sourceService = new SourceService(sourceModel);
+const sourceService = require('../services/sourceService');
 
 exports.getCapitalSources = async (req, res) => {
   try {
-    const [results] = await sourceService.getAllActiveSources();
+    const results = await sourceService.getAllActiveSources();
     res.json(results);
   } catch (err) {
     console.error('Error fetching capital sources:', err);
@@ -38,8 +33,12 @@ exports.deleteCapitalSource = async (req, res) => {
 exports.getSourceById = async (req, res) => {
   try {
     const sourceId = req.params.sourceId;
-    const [results] = await sourceService.getByIdSource(sourceId);
-    res.json(results[0]);
+    const result = await sourceService.getByIdSource(sourceId);
+    if (result) {
+      res.json(result);
+    } else {
+      res.status(404).send('Source not found');
+    }
   } catch (err) {
     console.error('Error fetching source details:', err);
     res.status(500).send('Error fetching source details');

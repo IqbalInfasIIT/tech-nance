@@ -1,47 +1,99 @@
-class Source {
-  constructor(db) {
-    this.db = db;
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../database/database');
+
+class Source extends Model {
+  static async getAllActive() {
+    return await this.findAll({ where: { is_Active: true } });
   }
 
-  async getAllActive() {
-    const query = 'SELECT * FROM capital_sources WHERE is_Active = TRUE';
-    return this.db.promise().query(query);
-  }
-
-  async add(source) {
-    const query = `INSERT INTO capital_sources (source_type, source_name, balance, is_Active, is_bank_account, bank_number) 
-                   VALUES (?, ?, ?, TRUE, ?, ?)`;
-    const values = [
-      source.sourceType,
-      source.sourceName, 
-      source.balance, 
-      source.isBankAccount,
-      source.bankNumber
-    ];
-    return this.db.promise().query(query, values);
+  static async add(source) {
+    return await this.create({
+      source_type: source.sourceType,
+      source_name: source.sourceName,
+      balance: source.balance,
+      is_Active: true,
+      is_bank_account: source.isBankAccount,
+      bank_number: source.bankNumber,
+    });
   }
   
-  async markInactive(sourceId) {
-    const query = 'UPDATE capital_sources SET is_Active = FALSE WHERE source_id = ?';
-    return this.db.promise().query(query, [sourceId]);
+  static async markInactive(sourceId) {
+    return await this.update(
+      { is_Active: false },
+      { where: { source_id: sourceId } }
+    );
   }
 
-  async getById(sourceId) {
-    const query = 'SELECT * FROM capital_sources WHERE source_id = ?';
-    return this.db.promise().query(query, [sourceId]);
+  static async getById(sourceId) {
+    return await this.findByPk(sourceId);
   }
 
-  async incrementBalance(sourceId, amount) {
-    const query = 'UPDATE capital_sources SET balance = balance + ? WHERE source_id = ?';
-    const values = [amount, sourceId];
-    return this.db.promise().query(query, values);
+  static async incrementBalance(sourceId, amount) {
+    const source = await this.findByPk(sourceId);
+    if (source) {
+      source.balance += amount;
+      return await source.save();
+    }
+    return null;
   }
   
-  async decrementBalance(sourceId, amount) {
-    const query = 'UPDATE capital_sources SET balance = balance - ? WHERE source_id = ?';
-    const values = [amount, sourceId];
-    return this.db.promise().query(query, values);
+  static async decrementBalance(sourceId, amount) {
+    const source = await this.findByPk(sourceId);
+    if (source) {
+      source.balance -= amount;
+      return await source.save();
+    }
+    return null;
   }
 }
+
+Source.init({
+  source_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
+  source_type: {
+    type: DataTypes.ENUM('Account'),
+    allowNull: false,
+  },
+  source_name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  balance: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+    defaultValue: 0,
+  },
+  is_Active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  is_bank_account: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  bank_number: {
+    type: DataTypes.STRING,
+    defaultValue: null,
+  },
+  created_at: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+}, {
+  sequelize,
+  modelName: 'Source',
+  tableName: 'capital_sources',
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: 'updated_at',
+});
 
 module.exports = Source;
