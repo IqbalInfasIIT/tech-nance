@@ -78,8 +78,6 @@ function TransactionScreen() {
     setFormData((prevData) => ({
       ...prevData,
       type: type,
-      sourceId: sourceId,
-      sourceType: 'source',
       paymentMethod: paymentMethod
     }));
   };  
@@ -139,7 +137,7 @@ function TransactionScreen() {
       alert('Error deleting category. Please try again.');
     }
   };
-  
+
   return (
     <div className="transaction-container">
       <h2>Select Transaction Type</h2>

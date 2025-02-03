@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CategoryPopup from './CategoryComp/CategoryPopup';
 import { Link } from 'react-router-dom';
 import './Form.css';
 
-function ExpenseForm({ handleInputChange, expenseCategories, deleteCategory, expenseMainCategoryCount }) {
+function ExpenseForm({ handleInputChange, expenseCategories, deleteCategory, expenseMainCategoryCount, sourceId }) {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
+
+  useEffect(() => {
+    handleInputChange({ target: { name: 'sourceId', value: sourceId } });
+    handleInputChange({ target: { name: 'sourceType', value: 'source' } });
+  }, [sourceId, handleInputChange]);
 
   const handleCategoryChange = (categoryId, categoryName) => {
     setSelectedCategory(categoryName);
@@ -30,7 +35,7 @@ function ExpenseForm({ handleInputChange, expenseCategories, deleteCategory, exp
         />
         <button type="button" className="selected-category-button" onClick={() => setShowPopup(true)}>Select category</button>
         <button type="button" className="add-category-button">
-          <Link to="/add-category/expense_categories">Add Category</Link>
+          <Link className="full-button-link" to="/add-category/expense_categories">Add Category</Link>
         </button>
       </div>
       <CategoryPopup

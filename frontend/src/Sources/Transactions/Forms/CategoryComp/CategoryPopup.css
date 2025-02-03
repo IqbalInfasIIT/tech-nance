@@ -36,11 +36,16 @@
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  background-color: #f9f9f9;
+  background-color: #e2e2e2;
+  border-radius: 1vw;
 }
 
 .subcategory-item:hover {
-  background-color: #949494;
+  background-color: #646464;
+}
+
+.clickable-box:hover {
+  background-color: #646464;
 }
 
 .clickable-box {
@@ -48,6 +53,8 @@
 }
 
 .delete-button-main {
+  width: 12vw;
+  font-size: 0.7em;
   background-color: #000000;
   color: white;
   border: none;
@@ -57,11 +64,10 @@
   flex-shrink: 0;
   margin-left: 1em;
 }
-.delete-button-main:hover1 {
-  background-color: #949494;
-}
 
 .delete-button {
+  width: 10vw;
+  font-size: 0.7em;
   background-color: #ff4d4d;
   color: white;
   border: none;
@@ -69,7 +75,6 @@
   cursor: pointer;
   padding: 0.6em 1.2em;
   flex-shrink: 0;
-  margin-left: 1em;
 }
 
 .delete-button:hover {
@@ -77,6 +82,7 @@
 }
 
 .close-button {
+  font-size: 0.9em;
   width: 100%;
   background-color: #007bff;
   color: white;
@@ -89,8 +95,4 @@
 
 .close-button:hover {
   background-color: #003064;
-}
-
-.clickable-box:hover {
-  background-color: #e1f5fe;
 }

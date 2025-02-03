@@ -1,8 +1,15 @@
-const transactionService = require('../services/transactionService');
+const db = require('../database/db');
+const Transaction = require('../models/Transaction');
+const TransactionService = require('../services/transactionService');
+const Source = require('../models/Source');
+
+const transactionModel = new Transaction(db);
+const sourceModel = new Source(db);
+const transactionService = new TransactionService(transactionModel, sourceModel);
 
 exports.getAllTransactions = async (req, res) => {
   try {
-    const results = await transactionService.getAllTransactions();
+    const [results] = await transactionService.getAllTransactions();
     res.json(results);
   } catch (err) {
     console.error('Error fetching transactions:', err);
@@ -12,7 +19,7 @@ exports.getAllTransactions = async (req, res) => {
 
 exports.getAllTransactionsWithNames = async (req, res) => {
   try {
-    const results = await transactionService.getAllTransactionsWithNames();
+    const [results] = await transactionService.getAllTransactionsWithNames();
     res.json(results);
   } catch (err) {
     console.error('Error fetching transactions with names:', err);
@@ -22,11 +29,13 @@ exports.getAllTransactionsWithNames = async (req, res) => {
 
 exports.addTransaction = async (req, res) => {
   try {
-    const transaction = await transactionService.addTransaction(req.body);
-    res.status(201).json({ message: 'Transaction added successfully!', transaction });
+    const transaction = req.body;
+    await transactionService.addTransaction(transaction);
+    console.log(transaction);
+    res.status(201).json({ message: 'Transaction added successfully!' });
   } catch (err) {
     console.error('Error adding transaction:', err);
-    res.status(500).json({ message: `Error adding transaction: ${err.message}` });
+    res.status(500).json({ message: 'Error adding transaction' });
   }
 };
 
@@ -37,17 +46,15 @@ exports.deleteTransaction = async (req, res) => {
     res.send('Transaction deleted successfully');
   } catch (err) {
     console.error('Error deleting transaction:', err);
-    res.status(500).send(`Error deleting transaction: ${err.message}`);
+    res.status(500).send('Error deleting transaction');
   }
 };
 
 exports.getTransactionById = async (req, res) => {
   try {
-    const transaction = await transactionService.getTransactionById(req.params.transactionId);
-    if (!transaction) {
-      return res.status(404).send('Transaction not found');
-    }
-    res.json(transaction);
+    const transactionId = req.params.transactionId;
+    const [results] = await transactionService.getTransactionById(transactionId);
+    res.json(results[0]);
   } catch (err) {
     console.error('Error fetching transaction details:', err);
     res.status(500).send('Error fetching transaction details');
@@ -57,8 +64,9 @@ exports.getTransactionById = async (req, res) => {
 exports.getIncomeBreakdown = async (req, res) => {
   try {
     const period = req.query.period;
-    const results = await transactionService.getIncomeBreakdown(period);
+    const [results] = await transactionService.getIncomeBreakdown(period);
     res.json(results);
+    console.log(results)
   } catch (err) {
     console.error('Error fetching income breakdown:', err);
     res.status(500).send('Error fetching income breakdown');
@@ -68,7 +76,7 @@ exports.getIncomeBreakdown = async (req, res) => {
 exports.getExpenseBreakdown = async (req, res) => {
   try {
     const period = req.query.period;
-    const results = await transactionService.getExpenseBreakdown(period);
+    const [results] = await transactionService.getExpenseBreakdown(period);
     res.json(results);
   } catch (err) {
     console.error('Error fetching expense breakdown:', err);
@@ -78,11 +86,10 @@ exports.getExpenseBreakdown = async (req, res) => {
 
 exports.getMonthlyTotals = async (req, res) => {
   try {
-    const results = await transactionService.getMonthlyTotals();
+    const [results] = await transactionService.getMonthlyTotals();
     res.json(results);
   } catch (err) {
     console.error('Error fetching monthly totals:', err);
     res.status(500).send('Error fetching monthly totals');
   }
 };
-

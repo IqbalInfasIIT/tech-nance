@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CategoryPopup from './CategoryComp/CategoryPopup';
 import './Form.css';
 
-function RefundForm({ formData, handleInputChange, expenseCategories }) {
+function RefundForm({ handleInputChange, expenseCategories, sourceId }) {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
 
+  useEffect(() => {
+    handleInputChange({ target: { name: 'destinationId', value: sourceId } });
+    handleInputChange({ target: { name: 'destinationType', value: 'source' } });
+  }, [sourceId, handleInputChange]);
+
   const handleCategoryChange = (categoryId, categoryName) => {
     setSelectedCategory(categoryName);
-    handleInputChange({ target: { name: 'destinationId', value: categoryId } });
-    handleInputChange({ target: { name: 'destinationType', value: 'income_category' } });
+    handleInputChange({ target: { name: 'sourceId', value: categoryId } });
+    handleInputChange({ target: { name: 'sourceType', value: 'expense_category' } });
   };
 
   const handlePopupClose = () => {

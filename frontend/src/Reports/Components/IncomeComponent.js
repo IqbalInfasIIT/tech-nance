@@ -17,7 +17,7 @@ const IncomeComponent = ({ totalIncome, breakdown = [] }) => {
   const labels = [
     ...top4Categories.map(item => {
       const amount = parseFloat(item.total_amount || 0);
-      return amount > 0 ? item.main_category_name : null;
+      return amount > 0 ? item.parent_category_name : null;
     }).filter(label => label !== null),
     ...(otherCategoriesTotal > 0 ? ['Other'] : [])
   ];

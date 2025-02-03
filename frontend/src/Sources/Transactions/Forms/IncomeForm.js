@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CategoryPopup from './CategoryComp/CategoryPopup';
 import { Link } from 'react-router-dom';
 import './Form.css';
 
 
-function IncomeForm({ handleInputChange, incomeCategories, deleteCategory, incomeMainCategoryCount }) {
+function IncomeForm({ handleInputChange, incomeCategories, deleteCategory, incomeMainCategoryCount, sourceId }) {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
 
+  useEffect(() => {
+    handleInputChange({ target: { name: 'destinationId', value: sourceId } });
+    handleInputChange({ target: { name: 'destinationType', value: 'source' } });
+  }, [sourceId, handleInputChange]);
+
   const handleCategoryChange = (categoryId, categoryName) => {
     setSelectedCategory(categoryName);
-    handleInputChange({ target: { name: 'destinationId', value: categoryId } });
-    handleInputChange({ target: { name: 'destinationType', value: 'income_category' } });
+    handleInputChange({ target: { name: 'sourceId', value: categoryId } });
+    handleInputChange({ target: { name: 'sourceType', value: 'income_category' } });
   };
 
   const handlePopupClose = () => {
@@ -31,7 +36,7 @@ function IncomeForm({ handleInputChange, incomeCategories, deleteCategory, incom
         />
         <button type="button" className="selected-category-button" onClick={() => setShowPopup(true)}>Select category</button>
         <button type="button" className="add-category-button">
-          <Link to="/add-category/income_categories">Add Category</Link>
+          <Link className="full-button-link" to="/add-category/income_categories">Add Category</Link>
         </button>
       </div>
       <CategoryPopup

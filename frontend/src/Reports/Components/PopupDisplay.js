@@ -22,7 +22,7 @@ const PopupDisplay = ({ show, handleClose, title, breakdown = [] }) => {
                 .filter(item => parseFloat(item.total_amount) > 0)
                 .map((item, index) => (
                   <tr key={index}>
-                    <td>{item.main_category_name}</td>
+                    <td>{item.parent_category_name}</td>
                     <td>{parseFloat(item.total_amount).toFixed(2)}</td>
                   </tr>
               ))}

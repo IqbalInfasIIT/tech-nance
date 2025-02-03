@@ -8,7 +8,7 @@ import CustomLineChart from './Components/CustomLineChart';
 import './Reports.css';
 
 const Reports = () => {
-  const [period, setPeriod] = useState('2025-02');
+  const [period, setPeriod] = useState('2025-01');
   const [totalIncome, setTotalIncome] = useState(0);
   const [incomeBreakdown, setIncomeBreakdown] = useState([]);
   const [totalExpense, setTotalExpense] = useState(0);
@@ -21,12 +21,10 @@ const Reports = () => {
       try {
         const monthlyTotalsData = await getMonthlyTotals();
         setMonthlyTotals(monthlyTotalsData);
-        
         const currentMonthTotals = monthlyTotalsData.find(item => {
           const formattedPeriod = `${item.year}-${String(item.month).padStart(2, '0')}`;
           return formattedPeriod === period;
         });
-
         if (currentMonthTotals) {
           setTotalIncome(currentMonthTotals.total_income);
           setTotalExpense(currentMonthTotals.total_expenses);
@@ -34,20 +32,16 @@ const Reports = () => {
           setTotalIncome(0);
           setTotalExpense(0);
         }
-
         const incomeBreakdownData = await getIncomeBreakdown(period);
         setIncomeBreakdown(incomeBreakdownData);
-
         const expenseBreakdownData = await getExpenseBreakdown(period);
         setExpenseBreakdown(expenseBreakdownData);
-
         const transactionsData = await getAllTransactionsWithNames();
         setTransactions(transactionsData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-
     fetchData();
   }, [period]);
 

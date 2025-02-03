@@ -46,6 +46,14 @@ function MainTransactionForm({
           <label htmlFor="description">Description:</label>
           <input type="text" id="description" name="description" value={formData.description} onChange={handleInputChange} required />
         </div>
+        {selectedType === 'transfer' && (
+          <TransferForm 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+            accounts={accounts} 
+            sourceId={sourceId}
+          />
+        )}
         {selectedType === 'income' && (
           <IncomeForm 
             formData={formData} 
@@ -54,13 +62,6 @@ function MainTransactionForm({
             addCategory={addCategory} 
             deleteCategory={deleteCategory} 
             incomeMainCategoryCount={incomeMainCategoryCount}
-          />
-        )}
-        {selectedType === 'transfer' && (
-          <TransferForm 
-            formData={formData} 
-            handleInputChange={handleInputChange} 
-            accounts={accounts} 
             sourceId={sourceId}
           />
         )}
@@ -72,13 +73,14 @@ function MainTransactionForm({
             addCategory={addCategory} 
             deleteCategory={deleteCategory} 
             expenseMainCategoryCount={expenseMainCategoryCount}
+            sourceId={sourceId}
           />
         )}
         {selectedType === 'refund' && (
           <RefundForm 
-            formData={formData} 
             handleInputChange={handleInputChange} 
-            expenseCategories={expenseCategories} 
+            expenseCategories={expenseCategories}
+            sourceId={sourceId}
           />
         )}
         <div className="form-group full-width">

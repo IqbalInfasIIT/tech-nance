@@ -1,61 +1,41 @@
-const IncomeCategory = require('../models/IncomeCategory');
-const ExpenseCategory = require('../models/ExpenseCategory');
-
 class CategoryService {
-  constructor() {
-    this.models = {
-      income_categories: IncomeCategory,
-      expense_categories: ExpenseCategory,
-    };
+  constructor(categoryModel) {
+    this.categoryModel = categoryModel;
   }
 
   async addCategory(category, type) {
-    if (!this.models[type]) {
+    if (type !== 'income_categories' && type !== 'expense_categories') {
       throw new Error('Invalid category type specified');
-    }
-    if (!category.name || category.name.trim() === '') {
-      throw new Error('Category name is required.');
     }
 
     const mainCategoryCount = await this.getMainCategoryCount(type);
+
     if (mainCategoryCount >= 10) {
       throw new Error(`Cannot add more than 10 ${type} categories.`);
     }
 
-    return this.models[type].addCategory(category);
+    return this.categoryModel.addCategory(category, type);
   }
 
   async deleteCategory(categoryId, type) {
-    if (!this.models[type]) {
+    if (type !== 'income_categories' && type !== 'expense_categories') {
       throw new Error('Invalid category type specified');
     }
 
-    return this.models[type].deleteCategory(categoryId);
+    return this.categoryModel.deleteCategory(categoryId, type);
   }
 
   async getMainCategoryCount(type) {
-    if (!this.models[type]) {
-      throw new Error('Invalid category type specified');
-    }
-
-    return this.models[type].getMainCategoryCount();
+    return this.categoryModel.getMainCategoryCount(type);
   }
 
   async getMainCategories(type) {
-    if (!this.models[type]) {
-      throw new Error('Invalid category type specified');
-    }
-
-    return this.models[type].getMainCategories();
+    return this.categoryModel.getMainCategories(type);
   }
 
   async getLinkedCategories(type, parentId) {
-    if (!this.models[type]) {
-      throw new Error('Invalid category type specified');
-    }
-
-    return this.models[type].getLinkedCategories(parentId);
+    return this.categoryModel.getLinkedCategories(type, parentId);
   }
 }
 
-module.exports = new CategoryService();
+module.exports = CategoryService;

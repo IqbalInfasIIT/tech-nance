@@ -5,9 +5,9 @@ import './IncExpComponent.css';
 
 const ExpenseComponent = ({ totalExpense, breakdown = [] }) => {
   const [showPopup, setShowPopup] = useState(false);
-
   const top4Categories = breakdown.slice(0, 4);
   const otherCategoriesTotal = breakdown.slice(4).reduce((acc, item) => acc + parseFloat(item.total_amount || 0), 0);
+  const isRefund = totalExpense < 0;
 
   const data = [
     ...top4Categories.map(item => parseFloat(item.total_amount || 0)),
@@ -17,31 +17,38 @@ const ExpenseComponent = ({ totalExpense, breakdown = [] }) => {
   const labels = [
     ...top4Categories.map(item => {
       const amount = parseFloat(item.total_amount || 0);
-      return amount > 0 ? item.main_category_name : null;
+      return amount > 0 ? item.parent_category_name : null;
     }).filter(label => label !== null),
     ...(otherCategoriesTotal > 0 ? ['Other'] : [])
   ];
 
   return (
     <div className="IncExp-component">
-      <h3 className="total-value">
-        Total Expenses: {new Intl.NumberFormat(undefined, { 
-          minimumFractionDigits: 2, 
-          maximumFractionDigits: 2 
-        }).format(totalExpense)}
-      </h3>
-      <div className="pie-chart-container">
-        <CustomPieChart data={data} labels={labels} />
-      </div>
-      <button className="details-button" onClick={() => setShowPopup(true)}>
-        View Details
-      </button>
-      <PopupDisplay
-        show={showPopup}
-        handleClose={() => setShowPopup(false)}
-        title="Expense Breakdown"
-        breakdown={breakdown}
-      />
+      {isRefund ? (
+        <div className="refund-value">
+          Refunds: {new Intl.NumberFormat(undefined, { 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+          }).format(Math.abs(totalExpense))}
+        </div>
+      ) 
+      : 
+      <><h3 className="total-value">
+          Total Expenses: {new Intl.NumberFormat(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).format(Math.abs(totalExpense))}
+
+        </h3><div className="pie-chart-container">
+            <CustomPieChart data={data} labels={labels} />
+          </div><button className="details-button" onClick={() => setShowPopup(true)} disabled={isRefund || totalExpense === 0}>
+            View Details
+          </button><PopupDisplay
+            show={showPopup}
+            handleClose={() => setShowPopup(false)}
+            title="Expense Breakdown"
+            breakdown={breakdown} /></>
+      }
     </div>
   );
 };

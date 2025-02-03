@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getSources, deleteSource } from '../Services/SourcesApi';
+import { getSources, deleteSource, addSource } from '../Services/SourcesApi';
 import './SourcesScreen.css';
 
 function SourcesScreen() {
@@ -11,11 +11,9 @@ function SourcesScreen() {
     const fetchData = async () => {
       try {
         const data = await getSources();
-        console.log('Fetched sources:', data);
-        setAccounts(Array.isArray(data) ? data : []);
+        setAccounts(data);
       } catch (error) {
         console.error('Error fetching sources:', error);
-        setAccounts([]);
       }
     };
     fetchData();
@@ -38,35 +36,35 @@ function SourcesScreen() {
       }
     }
   };
-
   return (
     <div className="main-container">
-      <div className="left-panel">
-        <h3>Accounts</h3>
-        <div className="account-list">
-          {accounts && accounts.length > 0 ? (
-            accounts.map(account => (
-              <div key={account.source_id} className="account-card" onClick={() => handleCardClick(account.source_id)}>
-                <div className="account-row">
-                  <h3>{account.is_bank_account ? 'Bank' : 'Cash'}: {account.source_name}</h3>
-                  <p>Balance: {new Intl.NumberFormat().format(account.balance)}</p>
-                </div>
-                <div className="delete-row">
-                  <button onClick={(e) => {e.stopPropagation(); handleDeleteSourceClick(account.source_id);}}>
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p>No accounts available.</p> // Handle case where accounts is empty
-          )}
-          <div className="add-account" onClick={() => navigate('/add-source/Account')}>
-            <h3>Add Account</h3>
+    <div className="left-panel">
+      <h3>Accounts</h3>
+      <div className="account-list">
+        {accounts.map(account => (
+          <div key={account.source_id} className="account-card" onClick={() => handleCardClick(account.source_id)}>
+            <div className="account-row">
+              <h3>{account.is_bank_account ? 'Bank' : 'Cash'}: {account.source_name}</h3>
+              {account.bank_number && (
+                <p>{account.bank_number}</p>
+              )}
+            </div>
+            <div className="account-row">
+              <p>Balance: {new Intl.NumberFormat().format(account.balance)}</p>
+            </div>
+            <div className="delete-row">
+              <button onClick={(e) => {e.stopPropagation(); handleDeleteSourceClick(account.source_id);}}>
+                Delete
+              </button>
+            </div>
           </div>
-        </div>     
+        ))}
+        <div className="add-account" onClick={() => navigate('/add-source/Account')}>
+          <h3>Add Account</h3>
+        </div>
       </div>
     </div>
+  </div>
   );
 }
 

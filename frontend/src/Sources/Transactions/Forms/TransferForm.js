@@ -1,4 +1,11 @@
+import React, { useEffect } from 'react';
+
 function TransferForm({ formData, handleInputChange, accounts, sourceId }) {
+  
+    useEffect(() => {
+      handleInputChange({ target: { name: 'sourceId', value: sourceId } });
+      handleInputChange({ target: { name: 'sourceType', value: 'source' } });
+    }, [sourceId, handleInputChange]);
 
   const handleTransferChange = (e) => {
     const { value } = e.target;

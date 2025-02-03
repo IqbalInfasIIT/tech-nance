@@ -1,51 +1,65 @@
-const categoryService = require('../services/categoryService');
+const db = require('../database/db');
+const Category = require('../models/Category');
+const CategoryService = require('../services/categoryService');
 
-exports.addCategory = async (req, res) => {
-  try {
-    await categoryService.addCategory(req.body, req.body.type);
-    res.status(201).send('Category added successfully');
-  } catch (err) {
-    console.error('Error adding category:', err);
-    res.status(500).send(`Error adding category: ${err.message}`);
-  }
-};
+const categoryModel = new Category(db);
+const categoryService = new CategoryService(categoryModel);
 
 exports.deleteCategory = async (req, res) => {
+  const { categoryId, categoryType } = req.body;
+
   try {
-    await categoryService.deleteCategory(req.body.categoryId, req.body.categoryType);
+    await categoryService.deleteCategory(categoryId, categoryType);
     res.status(200).json({ message: 'Category and related subcategories marked as inactive successfully' });
   } catch (err) {
     console.error('Error deleting category:', err);
-    res.status(500).json({ error: `Error deleting category: ${err.message}` });
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.addCategory = async (req, res) => {
+  const { name, parentCategoryId, isActive, type } = req.body;
+
+  try {
+    await categoryService.addCategory({ name, parentCategoryId, isActive }, type);
+    res.status(201).json({ message: `${type.slice(0, -10)} category added successfully` });
+  } catch (err) {
+    console.error(`Error adding ${type} category:`, err);
+    res.status(500).json({ error: err.message });
   }
 };
 
 exports.getMainCategories = async (req, res) => {
+  const { type } = req.params;
+
   try {
-    const categories = await categoryService.getMainCategories(req.params.type);
+    const categories = await categoryService.getMainCategories(type);
     res.status(200).json(categories);
   } catch (err) {
     console.error('Error getting categories:', err);
-    res.status(500).json({ error: `Error getting categories: ${err.message}` });
+    res.status(500).json({ error: 'Error getting categories' });
   }
 };
 
 exports.getLinkedCategories = async (req, res) => {
+  const { type, parentId } = req.params;
+
   try {
-    const categories = await categoryService.getLinkedCategories(req.params.type, req.params.parentId);
-    res.status(200).json(categories);
+    const subcategories = await categoryService.getLinkedCategories(type, parentId);
+    res.status(200).json(subcategories);
   } catch (err) {
-    console.error('Error getting linked categories:', err);
-    res.status(500).json({ error: `Error getting linked categories: ${err.message}` });
+    console.error(`Error getting linked ${type}:`, err);
+    res.status(500).json({ error: 'Error getting linked categories' });
   }
 };
 
 exports.getMainCategoryCount = async (req, res) => {
+  const { type } = req.params;
   try {
-    const count = await categoryService.getMainCategoryCount(req.params.type);
-    res.status(200).json({ mainCategoryCount: count });
+    const mainCategoryCount = await categoryService.getMainCategoryCount(type);
+    res.status(200).json({ mainCategoryCount });
   } catch (err) {
-    console.error('Error getting main category count:', err);
-    res.status(500).json({ error: `Error getting main category count: ${err.message}` });
+    console.error(`Error getting main ${type} category count:`, err);
+    res.status(500).json({ error: 'Error getting main category count' });
   }
 };
