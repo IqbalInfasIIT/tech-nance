@@ -1,30 +1,29 @@
-class SourceService {
-  constructor(sourceModel) {
-    this.sourceModel = sourceModel;
-  }
+const SourceController = require('../controllers/sourceController');
+const sourceController = new SourceController();
 
+class SourceService {
   async getAllActiveSources() {
-    return this.sourceModel.getAllActive();
+    return sourceController.getAllActiveSources();
   }
 
   async addSource(source) {
-    return this.sourceModel.add(source);
+    return sourceController.addSource(source);
   }
 
   async markSourceInactive(sourceId) {
-    return this.sourceModel.markInactive(sourceId);
+    return sourceController.markSourceInactive(sourceId);
   }
 
   async getByIdSource(sourceId) {
-    return this.sourceModel.getById(sourceId);
+    return sourceController.getByIdSource(sourceId);
   }
 
   async incrementBalanceSource(sourceId, amount) {
-    return this.sourceModel.incrementBalance(sourceId, amount);
+    return sourceController.incrementBalanceSource(sourceId, amount);
   }
 
   async decrementBalanceSource(sourceId, amount) {
-    return this.sourceModel.decrementBalance(sourceId, amount);
+    return sourceController.decrementBalanceSource(sourceId, amount);
   }
 }
 

@@ -1,95 +1,115 @@
-const db = require('../database/db');
 const Transaction = require('../models/Transaction');
-const TransactionService = require('../services/transactionService');
-const Source = require('../models/Source');
+const CapitalSource = require('../models/CapitalSource');
+const IncomeCategory = require('../models/IncomeCategory');
+const ExpenseCategory = require('../models/ExpenseCategory');
+const Sequelize = require('../models/Sequelize');
 
-const transactionModel = new Transaction(db);
-const sourceModel = new Source(db);
-const transactionService = new TransactionService(transactionModel, sourceModel);
+class TransactionController {
+    async getAllTransactions() {
+        return Transaction.findAll();
+    }
 
-exports.getAllTransactions = async (req, res) => {
-  try {
-    const [results] = await transactionService.getAllTransactions();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching transactions:', err);
-    res.status(500).send('Error fetching transactions');
+    async getAllTransactionsWithNames() {
+        return Transaction.findAll({
+            include: [
+                { model: CapitalSource, as: 'source', attributes: ['source_name'], required: false },
+                { model: IncomeCategory, as: 'incomeSource', attributes: ['category_name'], required: false },
+                { model: ExpenseCategory, as: 'expenseSource', attributes: ['category_name'], required: false },
+                { model: CapitalSource, as: 'destination', attributes: ['source_name'], required: false },
+                { model: IncomeCategory, as: 'incomeDestination', attributes: ['category_name'], required: false },
+                { model: ExpenseCategory, as: 'expenseDestination', attributes: ['category_name'], required: false },
+            ],
+            order: [['date', 'DESC']],
+        });
+    }
+
+    async addTransaction(transaction, t) {
+        return Transaction.create(transaction, { transaction: t });
+    }
+
+    async deleteTransaction(transactionId, t) {
+        return Transaction.destroy({ where: { transaction_id: transactionId }, transaction: t });
+    }
+
+    async getTransactionById(transactionId) {
+        return Transaction.findByPk(transactionId, {
+            include: [
+                { model: CapitalSource, as: 'source', attributes: ['source_name'], required: false },
+                { model: IncomeCategory, as: 'incomeSource', attributes: ['category_name'], required: false },
+                { model: ExpenseCategory, as: 'expenseSource', attributes: ['category_name'], required: false },
+                { model: CapitalSource, as: 'destination', attributes: ['source_name'], required: false },
+                { model: IncomeCategory, as: 'incomeDestination', attributes: ['category_name'], required: false },
+                { model: ExpenseCategory, as: 'expenseDestination', attributes: ['category_name'], required: false },
+            ],
+        });
+    }
+
+    async getIncomeBreakdown(period) {
+      return Transaction.findAll({
+          attributes: [
+              [Sequelize.col('incomeSource.parentCategory.category_name'), 'parent_category_name'],
+              [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_amount'],
+          ],
+          include: [
+              {
+                  model: IncomeCategory,
+                  as: 'incomeSource',
+                  attributes: [],
+                  required: true,
+                  include: [
+                      {
+                          model: IncomeCategory,
+                          as: 'parentCategory',
+                          attributes: [],
+                          required: true,
+                      },
+                  ],
+              },
+          ],
+          where: Sequelize.literal(`DATE_FORMAT(date, "%Y-%m") = '${period}' AND type = 'income'`), // Correct where clause
+          group: [Sequelize.col('incomeSource.parentCategory.category_name')],
+          order: [[Sequelize.fn('SUM', Sequelize.col('amount')), 'DESC']],
+          raw: true,
+      });
   }
-};
-
-exports.getAllTransactionsWithNames = async (req, res) => {
-  try {
-    const [results] = await transactionService.getAllTransactionsWithNames();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching transactions with names:', err);
-    res.status(500).send('Error fetching transactions with names');
+  
+  async getExpenseBreakdown(period) {
+      return Transaction.findAll({
+          attributes: [
+              [Sequelize.col('expenseDestination.parentCategory.category_name'), 'parent_category_name'],
+              [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_amount'],
+          ],
+          include: [
+              {
+                  model: ExpenseCategory,
+                  as: 'expenseDestination',
+                  attributes: [],
+                  required: true,
+                  include: [
+                      {
+                          model: ExpenseCategory,
+                          as: 'parentCategory',
+                          attributes: [],
+                          required: true,
+                      },
+                  ],
+              },
+          ],
+          where: Sequelize.literal(`DATE_FORMAT(date, "%Y-%m") = '${period}' AND type = 'expense'`), // Correct where clause
+          group: [Sequelize.col('expenseDestination.parentCategory.category_name')],
+          order: [[Sequelize.fn('SUM', Sequelize.col('amount')), 'DESC']],
+          raw: true,
+      });
   }
-};
 
-exports.addTransaction = async (req, res) => {
-  try {
-    const transaction = req.body;
-    await transactionService.addTransaction(transaction);
-    console.log(transaction);
-    res.status(201).json({ message: 'Transaction added successfully!' });
-  } catch (err) {
-    console.error('Error adding transaction:', err);
-    res.status(500).json({ message: 'Error adding transaction' });
-  }
-};
+    async getMonthlyTotals() {
+        return Transaction.sequelize.query(`
+            SELECT year, month, total_income, total_expenses
+            FROM monthly_totals
+            ORDER BY year ASC, month ASC
+            LIMIT 12;
+        `, { type: Sequelize.QueryTypes.SELECT });
+    }
+}
 
-exports.deleteTransaction = async (req, res) => {
-  try {
-    const transactionId = req.params.transactionId;
-    await transactionService.deleteTransaction(transactionId);
-    res.send('Transaction deleted successfully');
-  } catch (err) {
-    console.error('Error deleting transaction:', err);
-    res.status(500).send('Error deleting transaction');
-  }
-};
-
-exports.getTransactionById = async (req, res) => {
-  try {
-    const transactionId = req.params.transactionId;
-    const [results] = await transactionService.getTransactionById(transactionId);
-    res.json(results[0]);
-  } catch (err) {
-    console.error('Error fetching transaction details:', err);
-    res.status(500).send('Error fetching transaction details');
-  }
-};
-
-exports.getIncomeBreakdown = async (req, res) => {
-  try {
-    const period = req.query.period;
-    const [results] = await transactionService.getIncomeBreakdown(period);
-    res.json(results);
-    console.log(results)
-  } catch (err) {
-    console.error('Error fetching income breakdown:', err);
-    res.status(500).send('Error fetching income breakdown');
-  }
-};
-
-exports.getExpenseBreakdown = async (req, res) => {
-  try {
-    const period = req.query.period;
-    const [results] = await transactionService.getExpenseBreakdown(period);
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching expense breakdown:', err);
-    res.status(500).send('Error fetching expense breakdown');
-  }
-};
-
-exports.getMonthlyTotals = async (req, res) => {
-  try {
-    const [results] = await transactionService.getMonthlyTotals();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching monthly totals:', err);
-    res.status(500).send('Error fetching monthly totals');
-  }
-};
+module.exports = TransactionController;

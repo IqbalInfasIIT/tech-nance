@@ -1,40 +1,43 @@
+const CategoryController = require('../controllers/categoryController');
+const IncomeCategory = require('../models/IncomeCategory');
+const ExpenseCategory = require('../models/ExpenseCategory');
+const categoryController = new CategoryController();
+
 class CategoryService {
-  constructor(categoryModel) {
-    this.categoryModel = categoryModel;
+  async getModel(type) {
+    switch (type) {
+      case 'income_categories':
+        return IncomeCategory;
+      case 'expense_categories':
+        return ExpenseCategory;
+      default:
+        throw new Error('Invalid category type specified');
+    }
   }
 
   async addCategory(category, type) {
-    if (type !== 'income_categories' && type !== 'expense_categories') {
-      throw new Error('Invalid category type specified');
-    }
-
-    const mainCategoryCount = await this.getMainCategoryCount(type);
-
-    if (mainCategoryCount >= 10) {
-      throw new Error(`Cannot add more than 10 ${type} categories.`);
-    }
-
-    return this.categoryModel.addCategory(category, type);
+    const model = await this.getModel(type);
+    return categoryController.addCategory(model, category);
   }
 
   async deleteCategory(categoryId, type) {
-    if (type !== 'income_categories' && type !== 'expense_categories') {
-      throw new Error('Invalid category type specified');
-    }
-
-    return this.categoryModel.deleteCategory(categoryId, type);
+    const model = await this.getModel(type);
+    return categoryController.deleteCategory(model, categoryId);
   }
 
   async getMainCategoryCount(type) {
-    return this.categoryModel.getMainCategoryCount(type);
+    const model = await this.getModel(type);
+    return categoryController.getMainCategoryCount(model);
   }
 
   async getMainCategories(type) {
-    return this.categoryModel.getMainCategories(type);
+    const model = await this.getModel(type);
+    return categoryController.getMainCategories(model);
   }
 
   async getLinkedCategories(type, parentId) {
-    return this.categoryModel.getLinkedCategories(type, parentId);
+    const model = await this.getModel(type);
+    return categoryController.getLinkedCategories(model, parentId);
   }
 }
 

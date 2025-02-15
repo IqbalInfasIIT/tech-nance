@@ -9,14 +9,14 @@ function IncomeForm({ handleInputChange, incomeCategories, deleteCategory, incom
   const [selectedCategory, setSelectedCategory] = useState('');
 
   useEffect(() => {
-    handleInputChange({ target: { name: 'destinationId', value: sourceId } });
-    handleInputChange({ target: { name: 'destinationType', value: 'source' } });
+    handleInputChange({ target: { name: 'destination_id', value: sourceId } });
+    handleInputChange({ target: { name: 'destination_type', value: 'source' } });
   }, [sourceId, handleInputChange]);
 
   const handleCategoryChange = (categoryId, categoryName) => {
     setSelectedCategory(categoryName);
-    handleInputChange({ target: { name: 'sourceId', value: categoryId } });
-    handleInputChange({ target: { name: 'sourceType', value: 'income_category' } });
+    handleInputChange({ target: { name: 'source_id', value: categoryId } });
+    handleInputChange({ target: { name: 'source_type', value: 'income_category' } });
   };
 
   const handlePopupClose = () => {

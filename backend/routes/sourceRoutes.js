@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const sourceController = require('../controllers/sourceController');
+const sourceHandler = require('../handlers/sourceHandler');
 
-router.get('/get-capital-sources', sourceController.getCapitalSources);
-router.get('/:sourceId', sourceController.getSourceById);
-router.post('/add-capital-source', sourceController.addCapitalSource);
-router.patch('/delete-capital-source/:sourceId', sourceController.deleteCapitalSource);
-
+router.get('/get-capital-sources', sourceHandler.getCapitalSources);
+router.get('/:sourceId', sourceHandler.getSourceById);
+router.post('/add-capital-source', sourceHandler.addCapitalSource);
+router.patch('/delete-capital-source/:sourceId', sourceHandler.deleteCapitalSource);
 
 module.exports = router;

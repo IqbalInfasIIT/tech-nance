@@ -1,48 +1,36 @@
-const db = require('../database/db');
-const Source = require('../models/Source');
-const SourceService = require('../services/sourceService');
+const CapitalSource = require('../models/CapitalSource');
 
-const sourceModel = new Source(db);
-const sourceService = new SourceService(sourceModel);
-
-exports.getCapitalSources = async (req, res) => {
-  try {
-    const [results] = await sourceService.getAllActiveSources();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching capital sources:', err);
-    res.status(500).send('Error fetching capital sources');
+class SourceController {
+  async getAllActiveSources() {
+    return CapitalSource.findAll({ where: { is_active: true } });
   }
-};
 
-exports.addCapitalSource = async (req, res) => {
-  try {
-    console.log(req.body)
-    await sourceService.addSource(req.body);
-    res.status(201).send('Capital source added successfully');
-  } catch (err) {
-    console.error('Error adding capital source:', err);
-    res.status(500).send('Error adding capital source');
+  async addSource(source) {
+    return CapitalSource.create({
+      source_type: source.sourceType,
+      source_name: source.sourceName,
+      balance: source.balance,
+      is_bank_account: source.isBankAccount,
+      bank_number: source.bankNumber,
+    });
   }
-};
 
-exports.deleteCapitalSource = async (req, res) => {
-  try {
-    await sourceService.markSourceInactive(req.params.sourceId);
-    res.send('Capital source marked as inactive successfully');
-  } catch (err) {
-    console.error('Error updating capital source:', err);
-    res.status(500).send('Error updating capital source');
-  }
-};
+  async markSourceInactive(sourceId) {
+    await CapitalSource.update({ is_active: false }, { where: { source_id: sourceId } });
+    return;
+  }  
 
-exports.getSourceById = async (req, res) => {
-  try {
-    const sourceId = req.params.sourceId;
-    const [results] = await sourceService.getByIdSource(sourceId);
-    res.json(results[0]);
-  } catch (err) {
-    console.error('Error fetching source details:', err);
-    res.status(500).send('Error fetching source details');
+  async getByIdSource(sourceId) {
+    return CapitalSource.findByPk(sourceId);
   }
-};
+
+  async incrementBalanceSource(sourceId, amount) {
+    return CapitalSource.increment('balance', { by: amount, where: { source_id: sourceId } });
+  }
+
+  async decrementBalanceSource(sourceId, amount) {
+    return CapitalSource.decrement('balance', { by: amount, where: { source_id: sourceId } });
+  }
+}
+
+module.exports = SourceController;

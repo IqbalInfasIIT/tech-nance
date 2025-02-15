@@ -8,14 +8,14 @@ function ExpenseForm({ handleInputChange, expenseCategories, deleteCategory, exp
   const [selectedCategory, setSelectedCategory] = useState('');
 
   useEffect(() => {
-    handleInputChange({ target: { name: 'sourceId', value: sourceId } });
-    handleInputChange({ target: { name: 'sourceType', value: 'source' } });
+    handleInputChange({ target: { name: 'source_id', value: sourceId } });
+    handleInputChange({ target: { name: 'source_type', value: 'source' } });
   }, [sourceId, handleInputChange]);
 
   const handleCategoryChange = (categoryId, categoryName) => {
     setSelectedCategory(categoryName);
-    handleInputChange({ target: { name: 'destinationId', value: categoryId } });
-    handleInputChange({ target: { name: 'destinationType', value: 'expense_category' } });
+    handleInputChange({ target: { name: 'destination_id', value: categoryId } });
+    handleInputChange({ target: { name: 'destination_type', value: 'expense_category' } });
   };
 
   const handlePopupClose = () => {

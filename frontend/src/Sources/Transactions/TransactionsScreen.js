@@ -20,7 +20,9 @@ const initialFormData = {
 };
 
 function TransactionScreen() {
-  const { sourceId } = useParams();
+  const { sourceId: sourceIdString } = useParams();
+  const sourceId = parseInt(sourceIdString, 10);
+
   const [source, setSource] = useState(null);
   const [selectedType, setSelectedType] = useState('');
   const [formData, setFormData] = useState(initialFormData);

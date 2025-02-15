@@ -1,17 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const transactionController = require('../controllers/transactionController');
+const transactionHandler = require('../handlers/transactionHandler');
 
-router.get('/get-transactions', transactionController.getAllTransactions);
-router.get('/income-breakdown', transactionController.getIncomeBreakdown);
-router.get('/expense-breakdown', transactionController.getExpenseBreakdown);
-router.get('/monthly-totals', transactionController.getMonthlyTotals); 
-router.get('/get-transactions-with-names', transactionController.getAllTransactionsWithNames); 
-
-router.get('/get-id/:transactionId', transactionController.getTransactionById); 
-router.delete('/delete-id/:transactionId', transactionController.deleteTransaction); 
-
-
-router.post('/add-transaction', transactionController.addTransaction);
+router.get('/get-transactions', transactionHandler.getAllTransactions);
+router.get('/income-breakdown', transactionHandler.getIncomeBreakdown);
+router.get('/expense-breakdown', transactionHandler.getExpenseBreakdown);
+router.get('/monthly-totals', transactionHandler.getMonthlyTotals);
+router.get('/get-transactions-with-names', transactionHandler.getAllTransactionsWithNames);
+router.get('/get-id/:transactionId', transactionHandler.getTransactionById);
+router.delete('/delete-id/:transactionId', transactionHandler.deleteTransaction);
+router.post('/add-transaction', transactionHandler.addTransaction);
 
 module.exports = router;

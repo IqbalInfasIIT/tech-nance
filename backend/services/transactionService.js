@@ -1,95 +1,123 @@
+const TransactionController = require('../controllers/transactionController');
+const CapitalSource = require('../models/CapitalSource');
+const IncomeCategory = require('../models/IncomeCategory');
+const ExpenseCategory = require('../models/ExpenseCategory');
+const Sequelize = require('../models/Sequelize');
+
+const transactionController = new TransactionController();
+
 class TransactionService {
-  constructor(transactionModel, sourceModel) {
-    this.transactionModel = transactionModel;
-    this.sourceModel = sourceModel;
-  }
-
-  async getAllTransactions() {
-    return this.transactionModel.getAll();
-  }
-
-  async getAllTransactionsWithNames() {
-    return this.transactionModel.getAllWithNames();
-  }
-
-  async addTransaction(transaction) {
-    const defaultValues = {
-      date: new Date().toISOString().split('T')[0],
-      number: 'N/A',
-      description: 'No description provided',
-      type: 'transfer',
-      amount: '0.00',
-      sourceId: '0',
-      sourceType: 'source',
-      destinationId: null,
-      destinationType: null,
-      paymentMethod: 'Cash'
-    };
-
-    const finalTransaction = { ...defaultValues, ...transaction };
-    await this.transactionModel.add(finalTransaction);
-
-    switch (finalTransaction.type) {
-      case 'transfer':
-        await this.sourceModel.decrementBalance(finalTransaction.sourceId, finalTransaction.amount);
-        await this.sourceModel.incrementBalance(finalTransaction.destinationId, finalTransaction.amount);
-        break;
-      case 'income':
-        await this.sourceModel.incrementBalance(finalTransaction.destinationId, finalTransaction.amount);
-        break;
-      case 'expense':
-        await this.sourceModel.decrementBalance(finalTransaction.sourceId, finalTransaction.amount);
-        break;
-      case 'refund':
-        await this.sourceModel.incrementBalance(finalTransaction.destinationId, finalTransaction.amount);
-        break;
-      default:
-        break;
+    async getAllTransactions() {
+        return transactionController.getAllTransactions();
     }
-  }
 
-  async deleteTransaction(transactionId) {
-    const [transactionResult] = await this.transactionModel.getById(transactionId);
-    if (transactionResult.length === 0) {
-      throw new Error('Transaction not found');
+    async getAllTransactionsWithNames() {
+        return transactionController.getAllTransactionsWithNames();
     }
-    const transaction = transactionResult[0];
-    await this.transactionModel.delete(transactionId);
 
-    switch (transaction.type) {
-      case 'transfer':
-        await this.sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
-        await this.sourceModel.decrementBalance(transaction.destinationId, transaction.amount);
-        break;
-      case 'income':
-        await this.sourceModel.decrementBalance(transaction.sourceId, transaction.amount);
-        break;
-      case 'expense':
-        await this.sourceModel.incrementBalance(transaction.sourceId, transaction.amount);
-        break;
-      case 'refund':
-        await this.sourceModel.decrementBalance(transaction.sourceId, transaction.amount);
-        break;
-      default:
-        break;
+    async addTransaction(transaction) {
+        console.log(transaction)
+        const defaultValues = {
+            date: new Date().toISOString().split('T')[0],
+            number: 'N/A',
+            description: 'No description provided',
+            type: 'transfer',
+            amount: '0.00',
+            source_id: null,
+            source_type: 'source',
+            destination_id: null,
+            destination_type: null,
+            paymentMethod: 'Cash',
+        };
+
+        const finalTransaction = { ...defaultValues, ...transaction };
+        console.log(finalTransaction,"bitch")
+
+        return Sequelize.transaction(async (t) => {
+            const createdTransaction = await transactionController.addTransaction(finalTransaction, t);
+
+            const amount = parseFloat(finalTransaction.amount);
+
+            switch (finalTransaction.type) {
+                case 'transfer':
+                    await CapitalSource.increment('balance', { by: amount, where: { source_id: finalTransaction.source_id }, transaction: t });
+                    await CapitalSource.decrement('balance', { by: amount, where: { source_id: finalTransaction.destination_id }, transaction: t });
+                    break;
+                case 'income':
+                    if (finalTransaction.destination_type === 'source') {
+                        await CapitalSource.increment('balance', { by: amount, where: { source_id: finalTransaction.destination_id }, transaction: t });
+                    }
+                    break;
+                case 'expense':
+                    if (finalTransaction.source_type === 'source') {
+                        await CapitalSource.decrement('balance', { by: amount, where: { source_id: finalTransaction.source_id }, transaction: t });
+                    }
+                    break;
+                case 'refund':
+                    if (finalTransaction.destination_type === 'source') {
+                        await CapitalSource.increment('balance', { by: amount, where: { source_id: finalTransaction.destination_id }, transaction: t });
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            return createdTransaction;
+        });
     }
-  }
 
-  async getTransactionById(transactionId) {
-    return this.transactionModel.getById(transactionId);
-  }
+    async deleteTransaction(transactionId) {
+        return Sequelize.transaction(async (t) => {
+            const transaction = await transactionController.getTransactionById(transactionId);
+            if (!transaction) {
+                throw new Error('Transaction not found');
+            }
 
-  async getIncomeBreakdown(period) {
-    return this.transactionModel.getIncomeBreakdown(period);
-  }
+            const amount = parseFloat(transaction.amount);
 
-  async getExpenseBreakdown(period) {
-    return this.transactionModel.getExpenseBreakdown(period);
-  }
+            await transactionController.deleteTransaction(transactionId, t);
 
-  async getMonthlyTotals() {
-    return this.transactionModel.getMonthlyTotals();
-  }
+            switch (transaction.type) {
+                case 'transfer':
+                    await CapitalSource.increment('balance', { by: amount, where: { source_id: transaction.source_id }, transaction: t });
+                    await CapitalSource.decrement('balance', { by: amount, where: { source_id: transaction.destination_id }, transaction: t });
+                    break;
+                case 'income':
+                    if (transaction.source_type === 'source') {
+                        await CapitalSource.decrement('balance', { by: amount, where: { source_id: transaction.source_id }, transaction: t });
+                    }
+                    break;
+                case 'expense':
+                    if (transaction.source_type === 'source') {
+                        await CapitalSource.increment('balance', { by: amount, where: { source_id: transaction.source_id }, transaction: t });
+                    }
+                    break;
+                case 'refund':
+                    if (transaction.source_type === 'source') {
+                        await CapitalSource.decrement('balance', { by: amount, where: { source_id: transaction.source_id }, transaction: t });
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    async getTransactionById(transactionId) {
+        return transactionController.getTransactionById(transactionId);
+    }
+
+    async getIncomeBreakdown(period) {
+        return transactionController.getIncomeBreakdown(period);
+    }
+
+    async getExpenseBreakdown(period) {
+        return transactionController.getExpenseBreakdown(period);
+    }
+
+    async getMonthlyTotals() {
+        return transactionController.getMonthlyTotals();
+    }
 }
 
 module.exports = TransactionService;

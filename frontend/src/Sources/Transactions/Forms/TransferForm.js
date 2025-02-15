@@ -3,15 +3,15 @@ import React, { useEffect } from 'react';
 function TransferForm({ formData, handleInputChange, accounts, sourceId }) {
   
     useEffect(() => {
-      handleInputChange({ target: { name: 'sourceId', value: sourceId } });
-      handleInputChange({ target: { name: 'sourceType', value: 'source' } });
+      handleInputChange({ target: { name: 'source_id', value: sourceId } });
+      handleInputChange({ target: { name: 'source_type', value: 'source' } });
     }, [sourceId, handleInputChange]);
 
   const handleTransferChange = (e) => {
     const { value } = e.target;
     handleInputChange(e);
-    handleInputChange({ target: { name: 'destinationId', value: value } });
-    handleInputChange({ target: { name: 'destinationType', value: 'source' } });
+    handleInputChange({ target: { name: 'destination_id', value: value } });
+    handleInputChange({ target: { name: 'destination_type', value: 'source' } });
   };
 
   return (
