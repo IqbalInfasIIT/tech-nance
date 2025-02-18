@@ -11,8 +11,8 @@ class TransactionService {
         return transactionController.getAllTransactions();
     }
 
-    async getAllTransactionsWithNames() {
-        return transactionController.getAllTransactionsWithNames();
+    async getAllTransactionsWithNames(startDate, endDate) {
+        return transactionController.getAllTransactionsWithNames(startDate, endDate);
     }
 
     async addTransaction(transaction) {
@@ -107,17 +107,10 @@ class TransactionService {
         return transactionController.getTransactionById(transactionId);
     }
 
-    async getIncomeBreakdown(startDate, endDate) {
-        return transactionController.getIncomeBreakdown(startDate, endDate);
-      }      
-
-    async getExpenseBreakdown(period) {
-        return transactionController.getExpenseBreakdown(period);
+    async getTransactionDateRange() {
+        return transactionController.getTransactionDateRange();
     }
-
-    async getMonthlyTotals() {
-        return transactionController.getMonthlyTotals();
-    }
+      
 }
 
 module.exports = TransactionService;

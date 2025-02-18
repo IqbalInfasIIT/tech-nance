@@ -4,6 +4,7 @@ const sequelize = require('./models/Sequelize');
 const sourceRoutes = require('./routes/sourceRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const monthlyTotalRoutes = require('./routes/monthlyTotalRoutes');
 
 const app = express();
 const port = 3001;
@@ -18,6 +19,7 @@ app.get('/', (req, res) => {
 app.use('/capital-sources', sourceRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/categories', categoryRoutes);
+app.use('/monthly-totals', monthlyTotalRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

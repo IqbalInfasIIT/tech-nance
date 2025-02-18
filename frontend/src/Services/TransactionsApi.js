@@ -10,9 +10,9 @@ export const getTransactions = async () => {
   }
 };
 
-export const getAllTransactionsWithNames = async () => {
+export const getAllTransactionsWithNames = async (startDate, endDate) => {
   try {
-    const response = await api.get('/transactions/get-transactions-with-names');
+    const response = await api.get('/transactions/get-transactions-with-names', { params: { startDate, endDate } });
     return response.data;
   } catch (error) {
     console.error('Error fetching transactions with names:', error);
@@ -40,33 +40,12 @@ export const addTransaction = async (transaction) => {
   }
 };
 
-export const getIncomeBreakdown = async (startDate, endDate) => {
+export const getTransactionDateRange = async () => {
   try {
-    const response = await api.get('/transactions/income-breakdown', { params: { startDate, endDate } });
+    const response = await api.get('/transactions/get-date-range');
     return response.data;
   } catch (error) {
-    console.error('Error fetching income breakdown:', error);
-    throw error;
-  }
-};
-
-
-export const getExpenseBreakdown = async (period) => {
-  try {
-    const response = await api.get('/transactions/expense-breakdown', { params: { period } });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching expense breakdown:', error);
-    throw error;
-  }
-};
-
-export const getMonthlyTotals = async () => {
-  try {
-    const response = await api.get('/transactions/monthly-totals');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching monthly totals:', error);
+    console.error('Error fetching transaction date range:', error);
     throw error;
   }
 };

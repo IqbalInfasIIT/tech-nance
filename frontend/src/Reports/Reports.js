@@ -3,7 +3,8 @@ import IncomeComponent from './Components/IncomeComponent';
 import ExpenseComponent from './Components/ExpenseComponent';
 import PeriodSelector from './Components/PeriodSelector';
 import TransactionsList from './Components/TransactionsList';
-import { getIncomeBreakdown, getExpenseBreakdown, getMonthlyTotals, getAllTransactionsWithNames } from '../Services/TransactionsApi';
+import { getAllTransactionsWithNames, getTransactionDateRange } from '../Services/TransactionsApi';
+import { getMonthlyTotals } from '../Services/MonthlyTotalsApi';
 import CustomLineChart from './Components/CustomLineChart';
 import './Reports.css';
 
@@ -16,37 +17,47 @@ const Reports = () => {
   const [expenseBreakdown, setExpenseBreakdown] = useState([]);
   const [monthlyTotals, setMonthlyTotals] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [dateRange, setDateRange] = useState({ earliestDate: '', latestDate: '' });
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDateRange = async () => {
       try {
-        const monthlyTotalsData = await getMonthlyTotals();
-        setMonthlyTotals(monthlyTotalsData);
-    
-        let totalIncome = 0;
-        let totalExpense = 0;
-    
-        monthlyTotalsData.forEach(item => {
-          totalIncome += parseFloat(item.total_income);
-          totalExpense += parseFloat(item.total_expenses);
-        });
-    
-        setTotalIncome(totalIncome);
-        setTotalExpense(totalExpense);
-    
-        const incomeBreakdownData = await getIncomeBreakdown(startDate, endDate);
-        setIncomeBreakdown(incomeBreakdownData);
-        const expenseBreakdownData = await getExpenseBreakdown(startDate, endDate);
-        setExpenseBreakdown(expenseBreakdownData);
-        const transactionsData = await getAllTransactionsWithNames();
-        setTransactions(transactionsData);
+        const range = await getTransactionDateRange();
+        if (range.earliestDate && range.latestDate) {
+          setDateRange(range);
+          setStartDate(range.earliestDate);
+          setEndDate(range.latestDate);
+          fetchData(range.earliestDate, range.latestDate);
+        }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching date range:", error);
       }
-    };    
-    fetchData();
-  }, [startDate, endDate]);
+    };
+  
+    fetchDateRange();
+  }, []);
+  
+  const fetchData = async (start, end) => {
+    try {
+      const totals = await getMonthlyTotals(start, end);
+      setMonthlyTotals(totals);
+      const transactionsData = await getAllTransactionsWithNames(start, end);
+      setTransactions(transactionsData);
 
+      const totalIncomeCalc = transactionsData
+        .filter(txn => txn.type === "income")
+        .reduce((sum, txn) => sum + parseFloat(txn.amount), 0);
+  
+      const totalExpenseCalc = transactionsData
+        .filter(txn => txn.type === "expense")
+        .reduce((sum, txn) => sum + parseFloat(txn.amount), 0);
+  
+      setTotalIncome(totalIncomeCalc);
+      setTotalExpense(totalExpenseCalc);
+    } catch (error) {
+      console.error("Error fetching report data:", error);
+    }
+  };
 
   const netBalance = totalIncome - totalExpense;
   const balanceMessage = netBalance > 0 ? 'Saved:' : netBalance < 0 ? 'Overspent by:' : 'Balanced';
@@ -60,17 +71,22 @@ const Reports = () => {
     <div className="reports-container">
       <div className={`net-balance-container ${balanceClass}`}>
       <PeriodSelector 
-          monthlyTotals={monthlyTotals} 
-          setStartDate={setStartDate} 
-          setEndDate={setEndDate} 
+          startDate={startDate}
+          endDate={endDate}
+          onPeriodChange={(newStart, newEnd) => {
+          setStartDate(newStart);
+          setEndDate(newEnd);
+          fetchData(newStart, newEnd);
+        }} 
         />
+
         <span className="balance-value">{balanceMessage} {formattedNetBalance}</span>
       </div>
       <div className="reports-grid">
         <div className="panel-left">
           <div className="subOne-left">
-            <IncomeComponent totalIncome={totalIncome} breakdown={incomeBreakdown} />
-            <ExpenseComponent totalExpense={totalExpense} breakdown={expenseBreakdown} />
+            <IncomeComponent totalIncome={totalIncome}/>
+            <ExpenseComponent totalExpense={totalExpense}/>
           </div>
           <div className='subTwo-left'>
             <CustomLineChart data={monthlyTotals} />

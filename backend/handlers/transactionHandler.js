@@ -67,27 +67,13 @@ exports.getMonthlyTotals = async (req, res) => {
   }
 };
 
-
-exports.getIncomeBreakdown = async (req, res) => {
+exports.getTransactionDateRange = async (req, res) => {
   try {
-    const { startDate, endDate } = req.query;
-    const results = await transactionService.getIncomeBreakdown(startDate, endDate);
-    res.json(results);
+    const dateRange = await transactionService.getTransactionDateRange();
+    res.json(dateRange);
   } catch (err) {
-    console.error('Error fetching income breakdown:', err);
-    res.status(500).send('Error fetching income breakdown');
-  }
-};
-
-
-exports.getExpenseBreakdown = async (req, res) => {
-  try {
-    const period = req.query.period;
-    const results = await transactionService.getExpenseBreakdown(period);
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching expense breakdown:', err);
-    res.status(500).send('Error fetching expense breakdown');
+    console.error('Error fetching transaction date range:', err);
+    res.status(500).send('Error fetching transaction date range');
   }
 };
 
