@@ -11,16 +11,6 @@ exports.getAllTransactions = async (req, res) => {
   }
 };
 
-exports.getAllTransactionsWithNames = async (req, res) => {
-  try {
-    const results = await transactionService.getAllTransactionsWithNames();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching transactions with names:', err);
-    res.status(500).send('Error fetching transactions with names');
-  }
-};
-
 exports.addTransaction = async (req, res) => {
   try {
     const transaction = req.body;
@@ -55,17 +45,40 @@ exports.getTransactionById = async (req, res) => {
   }
 };
 
+exports.getAllTransactionsWithNames = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const results = await transactionService.getAllTransactionsWithNames(startDate, endDate);
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching transactions with names:', err);
+    res.status(500).send('Error fetching transactions with names');
+  }
+};
+
+exports.getMonthlyTotals = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const results = await transactionService.getMonthlyTotals(startDate, endDate);
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching monthly totals:', err);
+    res.status(500).send('Error fetching monthly totals');
+  }
+};
+
+
 exports.getIncomeBreakdown = async (req, res) => {
   try {
-    const period = req.query.period;
-    const results = await transactionService.getIncomeBreakdown(period);
+    const { startDate, endDate } = req.query;
+    const results = await transactionService.getIncomeBreakdown(startDate, endDate);
     res.json(results);
-    console.log(results);
   } catch (err) {
     console.error('Error fetching income breakdown:', err);
     res.status(500).send('Error fetching income breakdown');
   }
 };
+
 
 exports.getExpenseBreakdown = async (req, res) => {
   try {
@@ -78,12 +91,3 @@ exports.getExpenseBreakdown = async (req, res) => {
   }
 };
 
-exports.getMonthlyTotals = async (req, res) => {
-  try {
-    const results = await transactionService.getMonthlyTotals();
-    res.json(results);
-  } catch (err) {
-    console.error('Error fetching monthly totals:', err);
-    res.status(500).send('Error fetching monthly totals');
-  }
-};

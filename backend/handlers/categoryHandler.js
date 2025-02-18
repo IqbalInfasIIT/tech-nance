@@ -12,10 +12,10 @@ exports.addCategory = async (req, res) => {
   }
 };
 
-exports.deleteCategory = async (req, res) => {
+exports.markCategoryInactive = async (req, res) => {
   const { categoryId, categoryType } = req.body;
   try {
-    await categoryService.deleteCategory(categoryId, categoryType);
+    await categoryService.markCategoryInactive(categoryId, categoryType);
     res.status(200).json({ message: 'Category marked as inactive successfully' });
   } catch (err) {
     console.error('Error deleting category:', err);

@@ -7,16 +7,16 @@ class CategoryController {
     });
   }
 
-  async deleteCategory(model, categoryId) {
+  async markCategoryInactive(model, categoryId) {
     return model.update({ isActive: false }, { where: { category_id: categoryId } });
-  }
-
-  async getMainCategoryCount(model) {
-    return model.count({ where: { parent_category_id: null, isActive: true } });
   }
 
   async getMainCategories(model) {
     return model.findAll({ where: { parent_category_id: null, isActive: true } });
+  }
+
+  async getMainCategoryCount(model) {
+    return model.count({ where: { parent_category_id: null, isActive: true } });
   }
 
   async getLinkedCategories(model, parentId) {

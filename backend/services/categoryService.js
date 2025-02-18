@@ -20,9 +20,9 @@ class CategoryService {
     return categoryController.addCategory(model, category);
   }
 
-  async deleteCategory(categoryId, type) {
+  async markCategoryInactive(categoryId, type) {
     const model = await this.getModel(type);
-    return categoryController.deleteCategory(model, categoryId);
+    return categoryController.markCategoryInactive(model, categoryId);
   }
 
   async getMainCategoryCount(type) {

@@ -40,15 +40,16 @@ export const addTransaction = async (transaction) => {
   }
 };
 
-export const getIncomeBreakdown = async (period) => {
+export const getIncomeBreakdown = async (startDate, endDate) => {
   try {
-    const response = await api.get('/transactions/income-breakdown', { params: { period } });
+    const response = await api.get('/transactions/income-breakdown', { params: { startDate, endDate } });
     return response.data;
   } catch (error) {
     console.error('Error fetching income breakdown:', error);
     throw error;
   }
 };
+
 
 export const getExpenseBreakdown = async (period) => {
   try {

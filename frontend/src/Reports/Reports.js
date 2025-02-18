@@ -8,7 +8,8 @@ import CustomLineChart from './Components/CustomLineChart';
 import './Reports.css';
 
 const Reports = () => {
-  const [period, setPeriod] = useState('2025-01');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [totalIncome, setTotalIncome] = useState(0);
   const [incomeBreakdown, setIncomeBreakdown] = useState([]);
   const [totalExpense, setTotalExpense] = useState(0);
@@ -21,29 +22,31 @@ const Reports = () => {
       try {
         const monthlyTotalsData = await getMonthlyTotals();
         setMonthlyTotals(monthlyTotalsData);
-        const currentMonthTotals = monthlyTotalsData.find(item => {
-          const formattedPeriod = `${item.year}-${String(item.month).padStart(2, '0')}`;
-          return formattedPeriod === period;
+    
+        let totalIncome = 0;
+        let totalExpense = 0;
+    
+        monthlyTotalsData.forEach(item => {
+          totalIncome += parseFloat(item.total_income);
+          totalExpense += parseFloat(item.total_expenses);
         });
-        if (currentMonthTotals) {
-          setTotalIncome(currentMonthTotals.total_income);
-          setTotalExpense(currentMonthTotals.total_expenses);
-        } else {
-          setTotalIncome(0);
-          setTotalExpense(0);
-        }
-        const incomeBreakdownData = await getIncomeBreakdown(period);
+    
+        setTotalIncome(totalIncome);
+        setTotalExpense(totalExpense);
+    
+        const incomeBreakdownData = await getIncomeBreakdown(startDate, endDate);
         setIncomeBreakdown(incomeBreakdownData);
-        const expenseBreakdownData = await getExpenseBreakdown(period);
+        const expenseBreakdownData = await getExpenseBreakdown(startDate, endDate);
         setExpenseBreakdown(expenseBreakdownData);
         const transactionsData = await getAllTransactionsWithNames();
         setTransactions(transactionsData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
-    };
+    };    
     fetchData();
-  }, [period]);
+  }, [startDate, endDate]);
+
 
   const netBalance = totalIncome - totalExpense;
   const balanceMessage = netBalance > 0 ? 'Saved:' : netBalance < 0 ? 'Overspent by:' : 'Balanced';
@@ -56,7 +59,11 @@ const Reports = () => {
   return (
     <div className="reports-container">
       <div className={`net-balance-container ${balanceClass}`}>
-        <PeriodSelector period={period} setPeriod={setPeriod} />
+      <PeriodSelector 
+          monthlyTotals={monthlyTotals} 
+          setStartDate={setStartDate} 
+          setEndDate={setEndDate} 
+        />
         <span className="balance-value">{balanceMessage} {formattedNetBalance}</span>
       </div>
       <div className="reports-grid">

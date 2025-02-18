@@ -107,9 +107,9 @@ class TransactionService {
         return transactionController.getTransactionById(transactionId);
     }
 
-    async getIncomeBreakdown(period) {
-        return transactionController.getIncomeBreakdown(period);
-    }
+    async getIncomeBreakdown(startDate, endDate) {
+        return transactionController.getIncomeBreakdown(startDate, endDate);
+      }      
 
     async getExpenseBreakdown(period) {
         return transactionController.getExpenseBreakdown(period);
