@@ -24,6 +24,7 @@ function TransactionScreen() {
   const sourceId = parseInt(sourceIdString, 10);
 
   const [source, setSource] = useState(null);
+  const [balance, setBalance] = useState(null);
   const [selectedType, setSelectedType] = useState('');
   const [formData, setFormData] = useState(initialFormData);
   const [incomeCategories, setIncomeCategories] = useState([]);
@@ -37,6 +38,7 @@ function TransactionScreen() {
       try {
         const sourceData = await getSourceById(sourceId);
         setSource(sourceData);
+        setBalance(sourceData.balance)
 
         const [
           incomeCats,
@@ -148,7 +150,12 @@ function TransactionScreen() {
           <h3>Selected Source: {source.source_name}</h3>
         </>
       )}
-      <TransactionTypesView source={source} handleTypeClick={handleTypeClick} selectedType={selectedType}  />
+      <TransactionTypesView 
+        source={source} 
+        handleTypeClick={handleTypeClick} 
+        selectedType={selectedType}
+        sourceBalance={balance}
+      />
       {selectedType && (
         <>
           <h3>Selected Type: {selectedType}</h3>
@@ -167,6 +174,7 @@ function TransactionScreen() {
         deleteCategory={handleDeleteCategory}
         incomeMainCategoryCount={incomeMainCategoryCount}
         expenseMainCategoryCount={expenseMainCategoryCount}
+        sourceBalance={balance}
       />
     </div>
   );

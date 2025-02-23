@@ -7,7 +7,7 @@ import AmountInput from './Components/AmountInputView';
 
 function MainTransactionForm({ 
   selectedType, formData, handleInputChange, handleFormSubmit, incomeCategories, expenseCategories, accounts, addCategory, deleteCategory, 
-  incomeMainCategoryCount, expenseMainCategoryCount, sourceId
+  incomeMainCategoryCount, expenseMainCategoryCount, sourceId, sourceBalance
 }) {
   const [amount, setAmount] = useState('');
   const [amountError, setAmountError] = useState('');
@@ -90,6 +90,7 @@ function MainTransactionForm({
             setAmount={setAmount} 
             error={amountError} 
             setError={setAmountError} 
+            {...(selectedType !== 'refund' && selectedType !== 'income' && { sourceBalance })}
           />
         </div>
         <div className="spanwid">

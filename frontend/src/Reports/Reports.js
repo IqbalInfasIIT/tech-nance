@@ -73,6 +73,7 @@ const Reports = () => {
       <PeriodSelector 
           startDate={startDate}
           endDate={endDate}
+          dateRange={dateRange}
           onPeriodChange={(newStart, newEnd) => {
           setStartDate(newStart);
           setEndDate(newEnd);
