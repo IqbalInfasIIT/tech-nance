@@ -37,34 +37,34 @@ function SourcesScreen() {
     }
   };
   return (
-    <div className="main-container">
-    <div className="left-panel">
-      <h3>Accounts</h3>
-      <div className="account-list">
-        {accounts.map(account => (
-          <div key={account.source_id} className="account-card" onClick={() => handleCardClick(account.source_id)}>
-            <div className="account-row">
-              <h3>{account.is_bank_account ? 'Bank' : 'Cash'}: {account.source_name}</h3>
-              {account.bank_number && (
-                <p>{account.bank_number}</p>
-              )}
+    <div className="s-main-container">
+      <div className="s-left-panel">
+        <h3>Accounts</h3>
+        <div className="s-account-list">
+          {accounts.map(account => (
+            <div key={account.source_id} className="s-account-card" onClick={() => handleCardClick(account.source_id)}>
+              <div className="s-account-row">
+                <h3>{account.is_bank_account ? 'Bank' : 'Cash'}: {account.source_name}</h3>
+                {account.bank_number && (
+                  <p>{account.bank_number}</p>
+                )}
+              </div>
+              <div className="s-account-row">
+                <p>Balance: {new Intl.NumberFormat().format(account.balance)}</p>
+              </div>
+              <div className="s-delete-row">
+                <button className="s-button" onClick={(e) => {e.stopPropagation(); handleDeleteSourceClick(account.source_id);}}>
+                  Delete
+                </button>
+              </div>
             </div>
-            <div className="account-row">
-              <p>Balance: {new Intl.NumberFormat().format(account.balance)}</p>
-            </div>
-            <div className="delete-row">
-              <button onClick={(e) => {e.stopPropagation(); handleDeleteSourceClick(account.source_id);}}>
-                Delete
-              </button>
-            </div>
+          ))}
+          <div className="s-add-account" onClick={() => navigate('/add-source/Account')}>
+            <h3>Add Account</h3>
           </div>
-        ))}
-        <div className="add-account" onClick={() => navigate('/add-source/Account')}>
-          <h3>Add Account</h3>
         </div>
       </div>
     </div>
-  </div>
   );
 }
 

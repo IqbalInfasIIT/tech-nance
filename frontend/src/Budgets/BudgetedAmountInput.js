@@ -1,20 +1,17 @@
 import React from 'react';
 
-function AmountInput({ amount, setAmount, error, setError, sourceBalance }) {
+function BudgetedAmountInput({ amount, setAmount, error, setError }) {
   const handleAmountChange = (e) => {
-    const value = e.target.value;
-    const numberValue = Number(value.replace(/,/g, ''));
-  
-    if (numberValue > 0 && (sourceBalance === undefined || numberValue <= sourceBalance)) {
+    const value = e.target.value.replace(/,/g, '');
+    const numberValue = Number(value);
+    
+    if (numberValue > 0) {
       setError('');
       setAmount(new Intl.NumberFormat().format(numberValue));
-    } else if (sourceBalance !== undefined && numberValue > sourceBalance) {
-      setError('Insufficient balance.');
     } else {
       setError('Please enter a positive amount.');
     }
   };
-
 
   return (
     <div className="form-group full-width">
@@ -26,9 +23,9 @@ function AmountInput({ amount, setAmount, error, setError, sourceBalance }) {
         placeholder="Amount"
         required
       />
-      {error && <p className="error">{error}</p>}
+      {error && <p className="abs-error">{error}</p>}
     </div>
   );
 }
 
-export default AmountInput;
+export default BudgetedAmountInput;

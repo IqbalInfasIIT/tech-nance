@@ -10,7 +10,7 @@ const Budget = Sequelize.define('Budget', {
   budget_name: {
     type: DataTypes.STRING(255),
     allowNull: false,
-    unique: true,
+    unique: false,
   },
   category_id: {
     type: DataTypes.INTEGER,
@@ -43,6 +43,13 @@ const Budget = Sequelize.define('Budget', {
 }, {
   tableName: 'budgets',
   timestamps: false,
+
+  indexes: [
+    {
+      unique: true,
+      fields: ['budget_name', 'category_id'],
+    },
+  ],
 });
 
 module.exports = Budget;

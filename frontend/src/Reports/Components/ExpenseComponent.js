@@ -25,7 +25,7 @@ const ExpenseComponent = ({ totalExpense, breakdown = [] }) => {
   return (
     <div className="IncExp-component">
       {isRefund ? (
-        <div className="refund-value">
+        <div className="ie-refund-value">
           Refunds: {new Intl.NumberFormat(undefined, { 
             minimumFractionDigits: 2, 
             maximumFractionDigits: 2 
@@ -33,15 +33,15 @@ const ExpenseComponent = ({ totalExpense, breakdown = [] }) => {
         </div>
       ) 
       : 
-      <><h3 className="total-value">
+      <><h3 className="ie-total-value">
           Total Expenses: {new Intl.NumberFormat(undefined, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
           }).format(Math.abs(totalExpense))}
 
-        </h3><div className="pie-chart-container">
+        </h3><div className="ie-pie-chart-container">
             <CustomPieChart data={data} labels={labels} />
-          </div><button className="details-button" onClick={() => setShowPopup(true)} disabled={isRefund || totalExpense === 0}>
+          </div><button className="ie-details-button" onClick={() => setShowPopup(true)} disabled={isRefund || totalExpense === 0}>
             View Details
           </button><PopupDisplay
             show={showPopup}

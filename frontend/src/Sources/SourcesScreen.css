@@ -1,4 +1,4 @@
-.main-container {
+.s-main-container {
   display: flex;
   flex-direction: row;
   padding-left: 1vw;
@@ -8,7 +8,7 @@
   overflow: hidden;
 }
 
-.left-panel {
+.s-left-panel {
   width: 100%;
   background-color: #c8c8c8;
   padding: 1vw;
@@ -18,7 +18,7 @@
   overflow-y: auto;
 }
 
-.account-list {
+.s-account-list {
   display: flex;
   flex-wrap: wrap;
   gap: 1vw;
@@ -27,23 +27,23 @@
   justify-content: center;
 }
 
-.account-row {
+.s-account-row {
   width: 100%;
   margin-bottom: 0.5vh;
 }
 
-.account-row p {
+.s-account-row p {
   font-size: 1.0em;
 }
 
-.delete-row {
+.s-delete-row {
   display: flex;
   justify-content: center; 
   margin-top: 1vh;
   width: 100%;
 }
 
-.account-card {
+.s-account-card {
   box-sizing: border-box;
   background-color: #fff;
   width: 22%; 
@@ -60,16 +60,15 @@
   align-items: center;
 }
 
-.account-card h3{
+.s-account-card h3{
   font-size: 1.0em;
 }
 
-.account-card:hover{
+.s-account-card:hover{
   background-color: #ababab;
 }
 
-
-.add-account {
+.s-add-account {
   box-sizing: border-box;
   background-color: #46a95d;
   width: 22%; 
@@ -85,11 +84,11 @@
   cursor: pointer;
 }
 
-.add-account:hover {
+.s-add-account:hover {
   background-color: #344738;
 }
 
-button {
+.s-button {
   background-color: #dc3545;
   color: #fff;
   border: none;
@@ -101,6 +100,6 @@ button {
   font-size: 1.0em;
 }
 
-button:hover {
+.s-button:hover {
   background-color: #311518;
 }

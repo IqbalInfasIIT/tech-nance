@@ -90,7 +90,7 @@ function MainTransactionForm({
             setAmount={setAmount} 
             error={amountError} 
             setError={setAmountError} 
-            {...(selectedType !== 'refund' && selectedType !== 'income' && { sourceBalance })}
+            sourceBalance={selectedType !== 'refund' && selectedType !== 'income' ? sourceBalance : undefined}
           />
         </div>
         <div className="spanwid">

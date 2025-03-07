@@ -24,16 +24,16 @@ const IncomeComponent = ({ totalIncome, breakdown = [] }) => {
 
   return (
     <div className="IncExp-component">
-      <h3 className="total-value">
+      <h3 className="ie-total-value">
         Total Income: {new Intl.NumberFormat(undefined, { 
           minimumFractionDigits: 2, 
           maximumFractionDigits: 2 
         }).format(totalIncome)}
       </h3>
-      <div className="pie-chart-container">
+      <div className="ie-pie-chart-container">
         <CustomPieChart data={data} labels={labels} />
       </div>
-      <button className="details-button" onClick={() => setShowPopup(true)}>
+      <button className="ie-details-button" onClick={() => setShowPopup(true)}>
         View Details
       </button>
       <PopupDisplay

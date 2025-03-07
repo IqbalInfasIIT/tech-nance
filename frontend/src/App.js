@@ -5,9 +5,10 @@ import './App.css';
 import SourcesScreen from './Sources/SourcesScreen';
 import AddSourceScreen from './Sources/AddSourceScreen';
 import TransactionsScreen from './Sources/Transactions/TransactionsScreen';
-import Reports from './Reports/Reports';
-import Budgets from './Budgets/Budgets';
+import Reports from './Reports/ReportsScreen';
+import Budgets from './Budgets/BudgetsScreen';
 import AddCategoryScreen from './Sources/Transactions/Forms/CategoryComp/AddCategoryScreen';
+import AddBudgetScreen from './Budgets/AddBudgetScreen';  // Ensure this is imported correctly
 
 function App() {
   return (
@@ -23,13 +24,13 @@ function App() {
             <Route path="/reports" element={<Reports />} />
             <Route path="/budgets" element={<Budgets />} />
             <Route path="/add-category/:type" element={<AddCategoryScreen />} />
+            <Route path="/add-budget" element={<AddBudgetScreen />} /> {/* Route for AddBudgetScreen */}
           </Routes>
         </div>
       </div>
     </Router>
   );
 }
-
 
 function Sidebar() {
   const location = useLocation();
@@ -38,7 +39,8 @@ function Sidebar() {
   useEffect(() => {
     if (location.pathname.includes('reports')) setSelected('reports');
     else if (location.pathname.includes('budgets')) setSelected('budgets');
-    else setSelected('sources');
+    else if (location.pathname.includes('sources')) setSelected('sources');
+    else setSelected('');
   }, [location.pathname]);
 
   return (
