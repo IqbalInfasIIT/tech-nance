@@ -69,18 +69,19 @@ class Transaction {
  
   async getIncomeBreakdown(period) {
     const query = `
-        SELECT pc.category_name AS main_category_name, 
+        SELECT COALESCE(pc.category_name, sc.category_name) AS main_category_name, 
             SUM(t.amount) AS total_amount 
         FROM transactions t
-        JOIN income_categories sc ON t.destination_id = sc.category_id
+        JOIN income_categories sc ON t.source_id = sc.category_id
         LEFT JOIN income_categories pc ON sc.parent_category_id = pc.category_id
         WHERE t.type = 'income' 
         AND DATE_FORMAT(t.date, "%Y-%m") = ?
-        GROUP BY pc.category_name 
+        GROUP BY main_category_name 
         ORDER BY total_amount DESC;
     `;
     return this.db.promise().query(query, [period]);
   }
+
  
   async getExpenseBreakdown(period) {
     const query = `
