@@ -30,20 +30,38 @@ exports.deleteTransaction = async (req, res) => {
     res.send('Transaction deleted successfully');
   } catch (err) {
     console.error('Error deleting transaction:', err);
-    res.status(500).send('Error deleting transaction');
+    res.status(500).send('Error deleting transaction', err);
   }
 };
 
 exports.getTransactionById = async (req, res) => {
   try {
-    const transactionId = req.params.transactionId;
-    const result = await transactionService.getTransactionById(transactionId);
-    res.json(result);
+      const transactionId = req.params.transactionId;
+      const transaction = await transactionService.getTransactionById(transactionId);
+      if (!transaction) {
+          return res.status(404).json({ error: 'Transaction not found' });
+      }
+      res.json(transaction);
   } catch (err) {
-    console.error('Error fetching transaction details:', err);
-    res.status(500).send('Error fetching transaction details');
+      console.error('Error fetching transaction by ID:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+exports.getTransactionByIdPlus = async (req, res) => {
+  try {
+      const transactionId = req.params.transactionId;
+      const transaction = await transactionService.getTransactionByIdPlus(transactionId);
+      if (!transaction) {
+          return res.status(404).json({ error: 'Transaction not found' });
+      }
+      res.json(transaction);
+  } catch (err) {
+      console.error('Error fetching transaction by ID Plus:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 
 exports.getAllTransactionsWithNames = async (req, res) => {
   try {

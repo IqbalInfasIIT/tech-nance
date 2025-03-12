@@ -53,7 +53,7 @@
 .panel-left {
   border-radius: 0.5vw;
   box-shadow: 0 0 1vw rgba(0, 0, 0, 0.1);
-  width: 40vw;
+  width: 35vw;
   display: flex;
   flex-direction: column;
   height: 100%;

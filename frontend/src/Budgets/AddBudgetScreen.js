@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { getMainCategories } from '../Services/CategoryApi';
-import { addBudget } from '../Services/BudgetApi';
+import { addBudget, getPredictions } from '../Services/BudgetApi';
 import BudgetedAmountInput from './BudgetedAmountInput';
 import { useLocation } from 'react-router-dom';
 import './AddBudgetScreen.css';
 
 const AddBudgetsScreen = () => {
-  
   const location = useLocation();
   const budgetNames = location.state?.budgetNames || [];
 
@@ -16,7 +15,7 @@ const AddBudgetsScreen = () => {
   const [amount, setAmount] = useState('');
   const [budgetList, setBudgetList] = useState([]);
   const [error, setError] = useState('');
-  const [predictedAmount, setPredictedAmount] = useState(null);
+  const [predictedBudgetList, setPredictedBudgetList] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingAmount, setEditingAmount] = useState('');
 
@@ -105,23 +104,30 @@ const AddBudgetsScreen = () => {
     }
   };
 
-  const handleGetPredictions = () => {
-    const totalAmount = budgetList.reduce((acc, item) => acc + item.amount, 0);
-    const prediction = totalAmount * 1.1;
-    setPredictedAmount(prediction);
+  const handleGetPredictions = async () => {
+    try {
+      if (budgetList.length === 0) {
+        alert('Please add categories before predicting');
+        return;
+      }
+      const predictions = await getPredictions(budgetList);
+      setPredictedBudgetList(predictions);
+    } catch (error) {
+      console.error('Error getting predictions:', error);
+      alert('Failed to get budget predictions', error);
+    }
   };
 
   const handleBudgetNameChange = (e) => {
     const name = e.target.value;
     setBudgetName(name);
-  
+
     if (budgetNames.some(existingName => existingName.toLowerCase() === name.toLowerCase())) {
       setError('Budget name already exists. Please choose another.');
     } else {
       setError('');
     }
   };
-  
 
   return (
     <div className="abs-add-budget-container">
@@ -200,7 +206,10 @@ const AddBudgetsScreen = () => {
                     new Intl.NumberFormat().format(item.amount)
                   )}
                 </td>
-                <td>{predictedAmount ? new Intl.NumberFormat().format(predictedAmount) : 'N/A'}</td>
+                <td>
+                  {/* Display predicted amount for each category */}
+                  {predictedBudgetList[index] ? new Intl.NumberFormat().format(predictedBudgetList[index].predicted_amount) : 'N/A'}
+                </td>
                 <td>
                   <button onClick={() => handleRemoveCategory(index)} className="remove-button">
                     Remove

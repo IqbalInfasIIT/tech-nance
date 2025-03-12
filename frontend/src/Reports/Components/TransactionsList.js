@@ -1,11 +1,13 @@
 import React from 'react';
 import './TransactionsList.css';
 
-const TransactionsList = ({ transactions }) => {
+const TransactionsList = ({ transactions, handleDeleteTransaction }) => {
+
     return (
         <table className='t-table'>
             <thead>
                 <tr>
+                    <th className="col-delete">Delete</th>
                     <th className="col-date">Date</th>
                     <th className="col-number">Number</th>
                     <th className="col-description">Description</th>
@@ -20,6 +22,13 @@ const TransactionsList = ({ transactions }) => {
                     const rowClass = transaction?.type?.toLowerCase() || "";
                     return (
                         <tr key={index} className={rowClass}>
+                            <td className="col-action">
+                                <button 
+                                    className="trans-delete-button" 
+                                    onClick={() => handleDeleteTransaction(transaction.transaction_id)}
+                                >
+                                </button>
+                            </td>
                             <td className="col-date">{transaction.date}</td>
                             <td className="col-number">{transaction.number}</td>
                             <td className="col-description">{transaction.description}</td>

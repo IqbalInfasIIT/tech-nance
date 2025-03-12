@@ -39,4 +39,29 @@
   width: 10%;
   font-weight: bold;
 }
- 
+
+.t-table .col-description {
+  max-width: 10vw;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow: visible;
+}
+
+
+.trans-delete-button {
+  background-color: red;
+  border: none;
+  color: white;
+  cursor: pointer;
+  width: 1.5vw;
+  height: 1.5vw;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.trans-delete-button:hover {
+  background-color: darkred;
+}

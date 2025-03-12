@@ -18,8 +18,12 @@ class TransactionController {
     async deleteTransaction(transactionId, t) {
         return Transaction.destroy({ where: { transaction_id: transactionId }, transaction: t });
     }
-
+    
     async getTransactionById(transactionId) {
+        return Transaction.findByPk(transactionId);
+    }
+    
+    async getTransactionByIdPlus(transactionId) {
         return Transaction.findByPk(transactionId, {
             include: [
                 { model: CapitalSource, as: 'source', attributes: ['source_name'], required: false },
@@ -31,7 +35,7 @@ class TransactionController {
             ],
         });
     }
-
+    
     async getAllTransactionsWithNames(startDate, endDate) {
       const formattedStartDate = `${startDate} 00:00:00`;
       const formattedEndDate = `${endDate} 23:59:59`;

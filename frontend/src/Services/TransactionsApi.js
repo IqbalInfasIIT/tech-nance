@@ -49,3 +49,13 @@ export const getTransactionDateRange = async () => {
     throw error;
   }
 };
+
+export const deleteTransaction = async (transactionId) => {
+  try {
+    const response = await api.delete(`/transactions/delete-id/${transactionId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting transaction:', error);
+    throw error;
+  }
+};

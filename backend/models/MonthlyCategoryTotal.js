@@ -32,4 +32,22 @@ const MonthlyCategoryTotal = Sequelize.define('MonthlyCategoryTotal', {
   timestamps: false,
 });
 
+const IncomeCategory = require('./IncomeCategory');
+const ExpenseCategory = require('./ExpenseCategory');
+
+MonthlyCategoryTotal.belongsTo(IncomeCategory, {
+  foreignKey: 'category_id',
+  targetKey: 'category_id',
+  as: 'incomeCategory',
+  constraints: false,
+});
+
+MonthlyCategoryTotal.belongsTo(ExpenseCategory, {
+  foreignKey: 'category_id',
+  targetKey: 'category_id',
+  as: 'expenseCategory',
+  constraints: false,
+});
+
+
 module.exports = MonthlyCategoryTotal;

@@ -15,9 +15,7 @@ const port = 3001;
 app.use(express.json());
 app.use(cors());
 
-app.get('/', (req, res) => {
-  res.send('Welcome to the backend server!');
-});
+app.get('/', (req, res) => res.send('Welcome to the backend server!'));
 
 app.use('/capital-sources', sourceRoutes);
 app.use('/transactions', transactionRoutes);
@@ -28,16 +26,15 @@ app.use('/monthly-category-totals', monthlyCategoryTotalRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).json({ message: 'Internal Server Error' });
 });
 
-sequelize.sync({ force: false })
-  .then(() => {
-    console.log('Database & tables created!');
-    app.listen(port, () => {
-      console.log(`Backend running at http://localhost:${port}`);
-    });
-  })
-  .catch((err) => {
-    console.error('Unable to sync database:', err);
-  });
+(async () => {
+  try {
+    await sequelize.sync({ force: false });
+    console.log('✅ Database & tables are synced!');
+    app.listen(port, () => console.log(`🚀 Server running at http://localhost:${port}`));
+  } catch (error) {
+    console.error('❌ Database sync failed:', error);
+  }
+})();

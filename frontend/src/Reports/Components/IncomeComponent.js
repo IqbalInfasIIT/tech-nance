@@ -6,19 +6,19 @@ import './IncExpComponent.css';
 const IncomeComponent = ({ totalIncome, breakdown = [] }) => {
   const [showPopup, setShowPopup] = useState(false);
 
-  const top4Categories = breakdown.slice(0, 4);
-  const otherCategoriesTotal = breakdown.slice(4).reduce((acc, item) => acc + parseFloat(item.total_amount || 0), 0);
+  const sortedBreakdown = [...breakdown].sort((a, b) => b.total - a.total);
+
+  const top4Categories = sortedBreakdown.slice(0, 4);
+
+  const otherCategoriesTotal = sortedBreakdown.slice(4).reduce((acc, item) => acc + parseFloat(item.total || 0), 0);
 
   const data = [
-    ...top4Categories.map(item => parseFloat(item.total_amount || 0)),
+    ...top4Categories.map(item => parseFloat(item.total || 0)),
     ...(otherCategoriesTotal > 0 ? [otherCategoriesTotal] : [])
   ];
 
   const labels = [
-    ...top4Categories.map(item => {
-      const amount = parseFloat(item.total_amount || 0);
-      return amount > 0 ? item.parent_category_name : null;
-    }).filter(label => label !== null),
+    ...top4Categories.map(item => item.category_name),
     ...(otherCategoriesTotal > 0 ? ['Other'] : [])
   ];
 
@@ -30,12 +30,15 @@ const IncomeComponent = ({ totalIncome, breakdown = [] }) => {
           maximumFractionDigits: 2 
         }).format(totalIncome)}
       </h3>
+
       <div className="ie-pie-chart-container">
         <CustomPieChart data={data} labels={labels} />
       </div>
+
       <button className="ie-details-button" onClick={() => setShowPopup(true)}>
         View Details
       </button>
+
       <PopupDisplay
         show={showPopup}
         handleClose={() => setShowPopup(false)}

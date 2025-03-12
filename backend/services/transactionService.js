@@ -31,37 +31,9 @@ class TransactionService {
         };
 
         const finalTransaction = { ...defaultValues, ...transaction };
-        console.log(finalTransaction,"bitch")
 
         return Sequelize.transaction(async (t) => {
             const createdTransaction = await transactionController.addTransaction(finalTransaction, t);
-
-            const amount = parseFloat(finalTransaction.amount);
-
-            switch (finalTransaction.type) {
-                case 'transfer':
-                    await CapitalSource.increment('balance', { by: amount, where: { source_id: finalTransaction.source_id }, transaction: t });
-                    await CapitalSource.decrement('balance', { by: amount, where: { source_id: finalTransaction.destination_id }, transaction: t });
-                    break;
-                case 'income':
-                    if (finalTransaction.destination_type === 'source') {
-                        await CapitalSource.increment('balance', { by: amount, where: { source_id: finalTransaction.destination_id }, transaction: t });
-                    }
-                    break;
-                case 'expense':
-                    if (finalTransaction.source_type === 'source') {
-                        await CapitalSource.decrement('balance', { by: amount, where: { source_id: finalTransaction.source_id }, transaction: t });
-                    }
-                    break;
-                case 'refund':
-                    if (finalTransaction.destination_type === 'source') {
-                        await CapitalSource.increment('balance', { by: amount, where: { source_id: finalTransaction.destination_id }, transaction: t });
-                    }
-                    break;
-                default:
-                    break;
-            }
-
             return createdTransaction;
         });
     }
@@ -69,42 +41,20 @@ class TransactionService {
     async deleteTransaction(transactionId) {
         return Sequelize.transaction(async (t) => {
             const transaction = await transactionController.getTransactionById(transactionId);
+            console.log(transaction)
             if (!transaction) {
                 throw new Error('Transaction not found');
             }
-
-            const amount = parseFloat(transaction.amount);
-
             await transactionController.deleteTransaction(transactionId, t);
-
-            switch (transaction.type) {
-                case 'transfer':
-                    await CapitalSource.increment('balance', { by: amount, where: { source_id: transaction.source_id }, transaction: t });
-                    await CapitalSource.decrement('balance', { by: amount, where: { source_id: transaction.destination_id }, transaction: t });
-                    break;
-                case 'income':
-                    if (transaction.source_type === 'source') {
-                        await CapitalSource.decrement('balance', { by: amount, where: { source_id: transaction.source_id }, transaction: t });
-                    }
-                    break;
-                case 'expense':
-                    if (transaction.source_type === 'source') {
-                        await CapitalSource.increment('balance', { by: amount, where: { source_id: transaction.source_id }, transaction: t });
-                    }
-                    break;
-                case 'refund':
-                    if (transaction.source_type === 'source') {
-                        await CapitalSource.decrement('balance', { by: amount, where: { source_id: transaction.source_id }, transaction: t });
-                    }
-                    break;
-                default:
-                    break;
-            }
         });
     }
 
     async getTransactionById(transactionId) {
         return transactionController.getTransactionById(transactionId);
+    }
+
+    async getTransactionByIdPlus(transactionId) {
+        return transactionController.getTransactionByIdPlus(transactionId);
     }
 
     async getTransactionDateRange() {

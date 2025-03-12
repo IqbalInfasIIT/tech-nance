@@ -92,75 +92,186 @@ WHERE trigger_schema = DATABASE();
 ------------------------------------------------------------------------------------------------------------------------------------------
 DROP TRIGGER IF EXISTS trigger_name;
 ------------------------------------------------------------------------------------------------------------------------------------------
--- Create trigger for monthly totals
-DELIMITER //
+use technancedb;
 
-CREATE TRIGGER update_monthly_totals_on_insert
+
+DELIMITER $$
+
+CREATE TRIGGER InsertIntoMonthlyCatTots
 AFTER INSERT ON transactions
 FOR EACH ROW
 BEGIN
+    DECLARE pid_from_trans int;
     DECLARE v_year INT;
     DECLARE v_month INT;
-
-    -- Extract the year and month from the transaction date
+    
     SET v_year = YEAR(NEW.date);
     SET v_month = MONTH(NEW.date);
-
-    -- Update the monthly totals table based on the type of transaction
+    
     IF NEW.type = 'income' THEN
-        INSERT INTO monthly_totals (year, month, total_income)
-        VALUES (v_year, v_month, NEW.amount)
-        ON DUPLICATE KEY UPDATE
-            total_income = total_income + NEW.amount;
-    ELSEIF NEW.type = 'expense' THEN
-        INSERT INTO monthly_totals (year, month, total_expenses)
-        VALUES (v_year, v_month, NEW.amount)
-        ON DUPLICATE KEY UPDATE
-            total_expenses = total_expenses + NEW.amount;
-    ELSEIF NEW.type = 'refund' THEN
-        -- Deduct refund amount from both income and expenses
-        UPDATE monthly_totals
-        SET total_expenses = total_expenses - NEW.amount
-        WHERE year = v_year AND month = v_month;
+		INSERT INTO monthly_totals (year, month, total_income, total_expenses)
+        VALUES (v_year, v_month, NEW.amount, 0)
+        ON DUPLICATE KEY UPDATE total_income = total_income + NEW.amount;
+	END IF;    
+    IF NEW.type = 'expense' THEN
+		INSERT INTO monthly_totals (year, month, total_income, total_expenses)
+        VALUES (v_year, v_month, 0, NEW.amount)
+        ON DUPLICATE KEY UPDATE total_expenses = total_expenses + NEW.amount;
+	END IF;
+	IF NEW.type = 'refund' THEN
+		INSERT INTO monthly_totals (year, month, total_income, total_expenses)
+        VALUES (v_year, v_month, 0, NEW.amount)
+        ON DUPLICATE KEY UPDATE total_expenses = total_expenses - NEW.amount;
     END IF;
-END//
+
+    IF NEW.type = 'income' THEN
+	    SELECT parent_category_id INTO pid_from_trans
+        FROM income_categories
+        WHERE category_id = NEW.source_id;
+        INSERT INTO monthly_category_totals (year, month, category_type, category_id, total_amount)
+		VALUES (v_year,v_month,NEW.type, pid_from_trans, NEW.amount)
+        ON DUPLICATE KEY UPDATE total_amount = total_amount + NEW.amount;
+	END IF;
+	
+    IF NEW.type IN ('expense', 'refund') THEN
+		SELECT parent_category_id INTO pid_from_trans
+		FROM expense_categories
+		WHERE category_id = 
+			CASE
+				WHEN NEW.type = 'expense' THEN NEW.destination_id
+				WHEN NEW.type = 'refund' THEN NEW.source_id
+			END;
+		INSERT INTO monthly_category_totals (year, month, category_type, category_id, total_amount)
+		VALUES (v_year,v_month,'expense', pid_from_trans, 
+			CASE
+				WHEN NEW.type = 'expense' THEN NEW.amount
+                WHEN NEW.type = 'refund' THEN -NEW.amount
+			END)
+            ON DUPLICATE KEY UPDATE total_amount = 
+				total_amount + CASE
+                WHEN NEW.type = 'expense' THEN NEW.amount
+                WHEN NEW.type = 'refund' THEN -NEW.amount
+			END;
+	END IF;
+    
+    IF NEW.type = 'income' THEN
+    UPDATE capital_sources
+            SET balance = balance + NEW.amount
+            WHERE source_id = NEW.destination_id;
+	END IF;
+    IF NEW.type = 'expense' THEN
+    UPDATE capital_sources
+            SET balance = balance - NEW.amount
+            WHERE source_id = NEW.source_id;
+	END IF;
+    IF NEW.type = 'refund' THEN
+    UPDATE capital_sources
+            SET balance = balance + NEW.amount
+            WHERE source_id = NEW.destination_id;
+	END IF;
+    IF NEW.type = 'transfer' THEN
+    UPDATE capital_sources
+		SET balance = balance - NEW.amount
+        WHERE source_id = NEW.source_id;
+	UPDATE capital_sources
+		SET balance = balance + NEW.amount
+        WHERE source_id = NEW.destination_id;
+	END IF;
+END$$
 
 DELIMITER ;
 
 ------------------------------------------------------------------------------------------------------------------------------------------
 
-DELIMITER //
+DELIMITER $$
 
-CREATE TRIGGER update_monthly_totals_after_delete
+CREATE TRIGGER DeleteFromMonthlyCatTots
 AFTER DELETE ON transactions
 FOR EACH ROW
 BEGIN
+    DECLARE pid_from_trans INT;
     DECLARE v_year INT;
     DECLARE v_month INT;
-
-    -- Extract the year and month from the transaction date
+    
     SET v_year = YEAR(OLD.date);
     SET v_month = MONTH(OLD.date);
-
-    -- Update the monthly totals table based on the type of transaction
+    
     IF OLD.type = 'income' THEN
         UPDATE monthly_totals
         SET total_income = total_income - OLD.amount
         WHERE year = v_year AND month = v_month;
-    ELSEIF OLD.type = 'expense' THEN
+    END IF;
+
+    IF OLD.type = 'expense' THEN
         UPDATE monthly_totals
         SET total_expenses = total_expenses - OLD.amount
         WHERE year = v_year AND month = v_month;
-    ELSEIF OLD.type = 'refund' THEN
-        -- Increment the expenses only
+    END IF;
+
+    IF OLD.type = 'refund' THEN
         UPDATE monthly_totals
         SET total_expenses = total_expenses + OLD.amount
         WHERE year = v_year AND month = v_month;
     END IF;
-END//
+
+    IF OLD.type = 'income' THEN
+        SELECT parent_category_id INTO pid_from_trans
+        FROM income_categories
+        WHERE category_id = OLD.source_id;
+        
+        UPDATE monthly_category_totals
+        SET total_amount = total_amount - OLD.amount
+        WHERE year = v_year AND month = v_month AND category_type = OLD.type AND category_id = pid_from_trans;
+    END IF;
+
+    IF OLD.type IN ('expense', 'refund') THEN
+        SELECT parent_category_id INTO pid_from_trans
+        FROM expense_categories
+        WHERE category_id = 
+            CASE
+                WHEN OLD.type = 'expense' THEN OLD.destination_id
+                WHEN OLD.type = 'refund' THEN OLD.source_id
+            END;
+            
+        UPDATE monthly_category_totals
+        SET total_amount = total_amount -
+            CASE
+                WHEN OLD.type = 'expense' THEN OLD.amount
+                WHEN OLD.type = 'refund' THEN -OLD.amount
+            END
+        WHERE year = v_year AND month = v_month AND category_type = 'expense' AND category_id = pid_from_trans;
+    END IF;
+
+    IF OLD.type = 'income' THEN
+        UPDATE capital_sources
+        SET balance = balance - OLD.amount
+        WHERE source_id = OLD.destination_id;
+    END IF;
+
+    IF OLD.type = 'expense' THEN
+        UPDATE capital_sources
+        SET balance = balance + OLD.amount
+        WHERE source_id = OLD.source_id;
+    END IF;
+
+    IF OLD.type = 'refund' THEN
+        UPDATE capital_sources
+        SET balance = balance - OLD.amount
+        WHERE source_id = OLD.destination_id;
+    END IF;
+
+    IF OLD.type = 'transfer' THEN
+        UPDATE capital_sources
+        SET balance = balance + OLD.amount
+        WHERE source_id = OLD.source_id;
+        
+        UPDATE capital_sources
+        SET balance = balance - OLD.amount
+        WHERE source_id = OLD.destination_id;
+    END IF;
+END$$
 
 DELIMITER ;
-
 
 
 

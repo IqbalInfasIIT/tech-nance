@@ -2,12 +2,16 @@ const MonthlyCategoryTotalController = require('../controllers/monthlyCategoryTo
 const monthlyCategoryTotalController = new MonthlyCategoryTotalController();
 
 class MonthlyCategoryTotalService {
-  async getTotalsByCategoryId(categoryId) {
-    return monthlyCategoryTotalController.getTotalsByCategoryId(categoryId);
+  async getCategoryTotalsExpenseByCategoryId(categoryId) {
+    return monthlyCategoryTotalController.getCategoryTotalsExpenseByCategoryId(categoryId);
   }
 
-  async getTotalsByPeriod(year, month) {
-    return monthlyCategoryTotalController.getTotalsByPeriod(year, month);
+  async getAllCategoryTotals() {
+    return monthlyCategoryTotalController.getAllCategoryTotals();
+  }
+
+  async getCategoryTotalsByPeriod(year, month) {
+    return monthlyCategoryTotalController.getCategoryTotalsByPeriod(year, month);
   }
 }
 

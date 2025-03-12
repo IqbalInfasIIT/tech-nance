@@ -51,3 +51,12 @@ export const deleteBudget = async (budgetName) => {
   }
 };
 
+export const getPredictions = async (budgetList) => {
+  try {
+    const response = await api.post('/budgets/get-predictions', { budgetList });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching budget predictions:', error);
+    throw error;
+  }
+};
