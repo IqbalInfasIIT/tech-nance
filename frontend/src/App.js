@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, useLocation, Navigate  } from 'react-router-dom';
 import './App.css';
 
 import SourcesScreen from './Sources/SourcesScreen';
@@ -17,7 +17,7 @@ function App() {
         <Sidebar />
         <div className="content">
           <Routes>
-            <Route path="/" element={<SourcesScreen />} />
+          <Route path="/" element={<Navigate to="/sources" replace />} />
             <Route path="/sources" element={<SourcesScreen />} />
             <Route path="/add-source/:type" element={<AddSourceScreen />} />
             <Route path="/transactions/:sourceId" element={<TransactionsScreen />} />

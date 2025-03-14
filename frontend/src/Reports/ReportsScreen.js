@@ -18,9 +18,12 @@ const Reports = () => {
   const [totalExpense, setTotalExpense] = useState(0);
   const [expenseBreakdown, setExpenseBreakdown] = useState([]);
   const [monthlyTotals, setMonthlyTotals] = useState([]);
+  const [monthlyTotalsFullRange, setmonthlyTotalsFullRange] = useState([]);
   const [monthlyCategoryTotals, setmonthlyCategoryTotals] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [dateRange, setDateRange] = useState({ earliestDate: '', latestDate: '' });
+  const [initialDataLoaded, setInitialDataLoaded] = useState(false);
+  const [loadingPredictions, setLoadingPredictions] = useState(false);
 
   useEffect(() => {
     const fetchDateRange = async () => {
@@ -30,20 +33,25 @@ const Reports = () => {
           setDateRange(range);
           setStartDate(range.earliestDate);
           setEndDate(range.latestDate);
-          fetchData(range.earliestDate, range.latestDate);
+          await fetchData(range.earliestDate, range.latestDate, true);
+          setInitialDataLoaded(true);
         }
       } catch (error) {
         console.error("Error fetching date range:", error);
       }
     };
-  
     fetchDateRange();
   }, []);
   
-  const fetchData = async (start, end) => {
+  const fetchData = async (start, end, isInitial = false) => {
     try {
       const totals = await getMonthlyTotals(start, end);
-      setMonthlyTotals(totals);
+      if (isInitial) {
+        setmonthlyTotalsFullRange(totals);
+      } else {
+        setMonthlyTotals(totals);
+      }
+      
       const transactionsData = await getAllTransactionsWithNames(start, end);
       setTransactions(transactionsData);
 
@@ -161,7 +169,7 @@ const Reports = () => {
             <ExpenseComponent totalExpense={totalExpense} breakdown={expenseBreakdown}/>
           </div>
           <div className='subTwo-left'>
-            <CustomLineChart data={monthlyTotals} />
+            <CustomLineChart fullRange={monthlyTotalsFullRange} currentMonth={monthlyTotals} />
           </div>
         </div>
         <div className="panel-right">

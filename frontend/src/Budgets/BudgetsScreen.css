@@ -7,7 +7,7 @@
 }
 
 .bs-left-panel {
-  width: 50%;
+  width: 35%;
   padding: 10px;
   border-right: 1px solid #ccc;
   overflow-y: auto;
@@ -89,19 +89,20 @@
   padding: 10px;
   font-size: 14px;
   font-weight: bold;
-  border: none;
+  border: 1px dashed #484848;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .bs-edit-btn {
-  background-color: #4CAF50;
-  color: white;
+  border: px dashed #484848;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
 }
 
 .bs-edit-btn:hover {
-  background-color: #45a049;
+  background-color: #7b7b7b;
 }
 
 .bs-delete-btn {
@@ -114,10 +115,9 @@
 }
 
 .bs-add-budget {
-  border: 1px dashed #ccc;
   padding: 15px;
   text-align: center;
-  background-color: #f9f9f9;
+  background-color: #4CAF50;;
   color: #555;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -129,7 +129,7 @@
 }
 
 .bs-right-panel {
-  width: 50%;
+  width: 65%;
   padding: 10px;
   text-align: center;
   color: #999;
@@ -141,4 +141,14 @@
 .bs-right-panel p {
   font-size: 16px;
   color: #777;
+}
+
+.bs-category-progress {
+  display: flex;
+  flex-direction: column; /* Ensures all items are arranged vertically */
+  gap: 20px; /* Adds space between items */
+}
+
+.bs-progress-item {
+  width: 100%; /* Each item takes up full width */
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CustomPieChart from './CustomPieChart';
+import ReportsCustomPieChart from './ReportsCustomPieChart';
 import PopupDisplay from './PopupDisplay';
 import './IncExpComponent.css';
 
@@ -42,7 +42,7 @@ const ExpenseComponent = ({ totalExpense, breakdown = [] }) => {
             }).format(Math.abs(totalExpense))}
           </h3>
           <div className="ie-pie-chart-container">
-            <CustomPieChart data={data} labels={labels} />
+            <ReportsCustomPieChart data={data} labels={labels} />
           </div>
           <button
             className="ie-details-button"

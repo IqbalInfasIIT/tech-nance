@@ -18,6 +18,7 @@ const AddBudgetsScreen = () => {
   const [predictedBudgetList, setPredictedBudgetList] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingAmount, setEditingAmount] = useState('');
+  const [loadingPredictions, setLoadingPredictions] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -88,6 +89,7 @@ const AddBudgetsScreen = () => {
             amount: item.amount,
           })),
         };
+        setLoadingPredictions(true);
         await addBudget(newBudget);
         alert('Budget saved successfully');
 
@@ -101,6 +103,8 @@ const AddBudgetsScreen = () => {
     } catch (error) {
       console.error('Error saving budget:', error);
       alert('Failed to save budget');
+    } finally {
+      setLoadingPredictions(false);
     }
   };
 
@@ -110,11 +114,20 @@ const AddBudgetsScreen = () => {
         alert('Please add categories before predicting');
         return;
       }
+      setLoadingPredictions(true);
       const predictions = await getPredictions(budgetList);
       setPredictedBudgetList(predictions);
     } catch (error) {
-      console.error('Error getting predictions:', error);
-      alert('Failed to get budget predictions', error);
+        console.error('Error getting predictions:', error);
+        let errorMessage = 'Failed to get budget predictions';
+        if (error.response && error.response.data && error.response.data.error) {
+            errorMessage = error.response.data.error;
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        alert(errorMessage);
+    } finally {
+      setLoadingPredictions(false);
     }
   };
 
@@ -207,9 +220,11 @@ const AddBudgetsScreen = () => {
                   )}
                 </td>
                 <td>
-                  {/* Display predicted amount for each category */}
-                  {predictedBudgetList[index] ? new Intl.NumberFormat().format(predictedBudgetList[index].predicted_amount) : 'N/A'}
-                </td>
+                  {(() => {
+                    const prediction = predictedBudgetList.find(pred => pred.category_id === item.category_id);
+                    return prediction ? new Intl.NumberFormat().format(prediction.predicted_amount) : 'N/A';
+                    })()}
+                  </td>
                 <td>
                   <button onClick={() => handleRemoveCategory(index)} className="remove-button">
                     Remove
@@ -220,6 +235,11 @@ const AddBudgetsScreen = () => {
           </tbody>
         </table>
       </div>
+      {loadingPredictions && (
+            <div className="abs-loading-overlay">
+                <div className="abs-spinner"></div>
+            </div>
+        )}
     </div>
   );
 };
