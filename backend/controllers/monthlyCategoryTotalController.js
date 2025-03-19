@@ -33,7 +33,8 @@ class MonthlyCategoryTotalController {
           attributes: ['category_name'],
           where: Sequelize.literal(`MonthlyCategoryTotal.category_type = 'expense'`)
         }
-      ]
+      ],
+      order: [['year', 'DESC'], ['month', 'DESC']],
     });
   }
 

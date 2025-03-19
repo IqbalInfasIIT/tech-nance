@@ -1,0 +1,27 @@
+.bs-radial-bar-chart {
+    width: 100%;
+    height: 30vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    border: 0.2rem solid #e0e0e0;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+  }
+  
+.chart-status {
+    font-size: 1.3rem;
+    font-weight: bolder;
+    margin-top: 0.5rem;
+}
+
+.chart-status.overspent {
+    color: #FF4500;
+}
+  
+.chart-status.saved {
+color: #32CD32;
+}

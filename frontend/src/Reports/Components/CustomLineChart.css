@@ -1,10 +1,8 @@
 .line-chart {
     width: 99%;
     height: 28vh;
-    background-color: #efefef;
-    border-radius: 10px;
-    border: 1px solid #4c4c4c;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #cecece;
+    border-radius: 1vw;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -36,28 +34,14 @@
   stroke-width: 1;
 }
 
-.recharts-tooltip {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  padding: 10px;
-  font-size: 0.9rem;
-  color: #333;
-}
-
-.recharts-wrapper {
-  width: 100%;
-}
-
 .recharts-cartesian-axis-tick-value {
   font-size: 0.85rem;
   fill: #333;
 }
 
-
 .recharts-cartesian-axis-tick-line {
   stroke: #ccc;
 }
-
 
 .recharts-cartesian-grid-horizontal line,
 .recharts-cartesian-grid-vertical line {
@@ -66,25 +50,29 @@
 
 
 .recharts-default-legend {
-  font-size: 0.9rem;
+  font-size: 1.0rem;
   font-weight: bold;
 }
 
-.recharts-tooltip-wrapper {
-  background-color: rgba(0, 0, 0, 0.75);
-  color: #fff;
-  border-radius: 5px;
-  font-size: 0.85rem;
-  align-items: center;
-  justify-content: center;
-}
 
 
 .recharts-line-curve {
-  stroke-width: 3px;
+  stroke-width: 0.5rem;
 }
 
 .recharts-dot-active {
   stroke: #333;
   stroke-width: 1.5px;
+}
+
+.custom-tooltip {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px; 
+  font-family: 'Arial', sans-serif;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #333;
+  white-space: nowrap;
 }

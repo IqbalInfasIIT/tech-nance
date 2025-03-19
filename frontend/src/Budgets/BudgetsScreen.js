@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { getActiveBudgets, deleteBudget, getAllBudgets } from '../Services/BudgetApi';
 import { getCategoryTotalsByPeriod  } from '../Services/MonthlyCategoryTotalsApi';
 import './BudgetsScreen.css';
+import BudgetsCustomPieChart from './BudgetsCustomPieChart';
+import BudgetsRadialBarChart from './BudgetsRadialBarChart';
 
 function BudgetsScreen() {
   const [budgets, setBudgets] = useState([]);
@@ -49,6 +51,7 @@ function BudgetsScreen() {
       });
   
       setCategoryTotals(mappedCategories);
+      console.log(mappedCategories)
     } catch (error) {
       console.error('Error fetching category totals:', error);
     }
@@ -130,40 +133,51 @@ function BudgetsScreen() {
     <div className="bs-right-panel">
       {selectedBudget ? (
         <>
-          <h3>Details for {selectedBudget.name}</h3>
-          <div className="bs-category-progress">
-            {categoryTotals.map((category) => (
-              <div key={category.category_id} className="bs-progress-item">
-                <span>
-                  {category.expenseCategory
-                    ? category.expenseCategory.category_name
-                    : "Unknown Category"}
-                </span>
-                <div className="bs-progress-bar-container">
-                  <div
-                    className="bs-progress-bar"
-                    style={{
-                      width: `${
-                        category.targetAmount > 0
-                          ? (parseFloat(category.total_amount) / category.targetAmount) * 100
-                          : 0
-                      }%`,  
-                    }}
-                  ></div>
+          <h3 className="bs-budget-name">{selectedBudget.name}</h3>
+          <div className="bs-content-section">
+            <div className="bs-category-list">
+              {categoryTotals.map((category) => (
+                <div key={category.category_id} className="bs-category-row">
+                  <div className="bs-row-header">
+                    <div className="bs-item-name">{category.expenseCategory?.category_name || "Unknown Category"}</div>
+                    <div className="bs-target-amount">{new Intl.NumberFormat().format(category.targetAmount)}</div>
+                  </div>
+                  <div className="bs-progress-bar-full">
+                    <progress
+                      className={category.total_amount > category.targetAmount ? 'red' : 'green'}
+                      value={category.total_amount}
+                      max={category.targetAmount}
+                  ></progress>
                 </div>
-                <span>
-                  {new Intl.NumberFormat().format(category.total_amount)} / 
-                  {new Intl.NumberFormat().format(category.targetAmount)}
-                </span>
+                <div
+                  className={`bs-spent-amount ${
+                    category.total_amount > category.targetAmount ? 'over-target' : 'under-target'
+                  }`}
+                >
+                  Spent: {new Intl.NumberFormat().format(category.total_amount)}
+                </div>
               </div>
-            ))}
+              ))}
+            </div>
+            <div className="bs-pie-charts">
+              <h3 className="chart-header-break">Budget Breakdown</h3>
+              <BudgetsCustomPieChart
+                data={categoryTotals.map(category => category.total_amount)}
+                labels={categoryTotals.map(category => category.expenseCategory?.category_name || "Unknown Category")}
+              />
+              <h3 className="chart-header-prog">Progress</h3>
+              <BudgetsRadialBarChart
+                totalAmount={categoryTotals.reduce((sum, category) => sum + parseFloat(category.total_amount || 0), 0)}
+                totalTarget={categoryTotals.reduce((sum, category) => sum + parseFloat(category.targetAmount || 0), 0)}
+              />
+            </div>
           </div>
         </>
-        ) : (
-          <p>Please select a budget to view details</p>
-          )}
-      </div>
+      ) : (
+        <p>Please select a budget to view details</p>
+      )}
     </div>
+  </div>
   );
 }
 

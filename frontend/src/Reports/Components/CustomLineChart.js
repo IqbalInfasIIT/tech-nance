@@ -46,11 +46,10 @@ const CustomLineChart = ({ fullRange, currentMonth }) => {
 
   return (
     <div className="line-chart">
-      <ResponsiveContainer width="90%" height="100%">
+      <ResponsiveContainer width="90%" height="90%">
         <LineChart data={formattedData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="fullRange" />
-          <YAxis tickFormatter={tickFormatter} />
+          <XAxis dataKey="fullRange" tick={{ fontSize: 12 }}/>
+          <YAxis tickFormatter={tickFormatter} tick={{ fontSize: 12 }}/>
           <Legend />
           <Line
             type="linear"

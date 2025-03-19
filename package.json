@@ -5,7 +5,7 @@
     "setup-root": "npm install",
     "setup-frontend": "cd frontend && npm install",
     "setup-backend": "cd backend && npm install",
-    "setup-predictions": "cd predictions && python -m venv venv && venv\\Scripts\\activate && pip install flask pandas",
+    "setup-predictions": "cd predictions && python -m venv venv && venv\\Scripts\\activate && pip install flask pmdarima numpy==1.26.4",
     "setup-all": "npm run setup-root && npm run setup-frontend && npm run setup-backend && npm run setup-predictions",
     "start-predictions": "cd predictions && venv\\Scripts\\activate && python app.py",
     "start-backend": "cd backend && node server.js",
@@ -16,6 +16,9 @@
     "concurrently": "^9.0.1"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.8",
     "mysql2": "^3.12.0",
     "sequelize": "^6.37.5"
   }

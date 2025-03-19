@@ -19,7 +19,7 @@ const ReportsCustomPieChart = ({ data, labels }) => {
             cx="50%"
             cy="50%"
             labelLine={false}
-            outerRadius="50%"
+            outerRadius="80%"
             fill="#8884d8"
             dataKey="value"
           >
@@ -36,7 +36,10 @@ const ReportsCustomPieChart = ({ data, labels }) => {
             }
           />
           <Legend 
-            formatter={(value, entry) => `${value}`}
+            formatter={(value) => `${value}`}
+            iconSize={10}
+            align="center"
+            layout='horizontal'
           />
         </PieChart>
       </ResponsiveContainer>

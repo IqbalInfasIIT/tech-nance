@@ -216,7 +216,10 @@ const AddBudgetsScreen = () => {
                       style={{ width: '100px' }}
                     />
                   ) : (
-                    new Intl.NumberFormat().format(item.amount)
+                    <>
+                      <span>{new Intl.NumberFormat().format(item.amount)}</span>
+                      <div className="editable-hint">edit</div>
+                    </>
                   )}
                 </td>
                 <td>
