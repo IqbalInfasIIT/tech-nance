@@ -31,15 +31,12 @@ function BudgetsScreen() {
 
   const handleCardClick = async (budget) => {
     setSelectedBudget(budget);
-  
     const date = new Date();
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
-  
     try {
       const totals = await getCategoryTotalsByPeriod(year, month);
       const expenseCategories = totals.filter(category => category.category_type === "expense");
-  
       const mappedCategories = expenseCategories.map(category => {
         const matchingCategory = budget.categories.find(
           bCategory => bCategory.category_id === category.category_id
@@ -49,7 +46,6 @@ function BudgetsScreen() {
           targetAmount: matchingCategory ? parseFloat(matchingCategory.amount) : 0
         };
       });
-  
       setCategoryTotals(mappedCategories);
       console.log(mappedCategories)
     } catch (error) {
@@ -101,7 +97,10 @@ function BudgetsScreen() {
                     <div key={category.category_id} className="bs-category">
                       <span className="bs-category-name">{category.category_name}</span>
                       <span className="bs-category-amount">
-                        {new Intl.NumberFormat().format(category.amount)}
+                        {new Intl.NumberFormat(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        }).format(category.amount)}
                       </span>
                     </div>
                   ))}
@@ -109,12 +108,6 @@ function BudgetsScreen() {
             </div>
 
             <div className="bs-card-footer">
-              <button
-                className="bs-edit-btn"
-                onClick={(e) => { e.stopPropagation(); /* Add edit functionality */ }}
-              >
-                Edit
-              </button>
               <button
                 className="bs-delete-btn"
                 onClick={(e) => { e.stopPropagation(); handleDeleteBudgetClick(budget.name); }}
@@ -140,7 +133,12 @@ function BudgetsScreen() {
                 <div key={category.category_id} className="bs-category-row">
                   <div className="bs-row-header">
                     <div className="bs-item-name">{category.expenseCategory?.category_name || "Unknown Category"}</div>
-                    <div className="bs-target-amount">{new Intl.NumberFormat().format(category.targetAmount)}</div>
+                    <div className="bs-target-amount">
+                      {new Intl.NumberFormat(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      }).format(category.targetAmount)}
+                    </div>
                   </div>
                   <div className="bs-progress-bar-full">
                     <progress
@@ -154,7 +152,10 @@ function BudgetsScreen() {
                     category.total_amount > category.targetAmount ? 'over-target' : 'under-target'
                   }`}
                 >
-                  Spent: {new Intl.NumberFormat().format(category.total_amount)}
+                  Spent: {new Intl.NumberFormat(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          }).format(category.total_amount)}
                 </div>
               </div>
               ))}

@@ -36,6 +36,7 @@ function SourcesScreen() {
       }
     }
   };
+
   return (
     <div className="s-main-container">
       <div className="s-left-panel">
@@ -67,5 +68,4 @@ function SourcesScreen() {
     </div>
   );
 }
-
 export default SourcesScreen;

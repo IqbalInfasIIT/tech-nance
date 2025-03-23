@@ -6,7 +6,9 @@ import './IncExpComponent.css';
 const ExpenseComponent = ({ totalExpense, breakdown = [] }) => {
   const [showPopup, setShowPopup] = useState(false);
 
-  const sortedBreakdown = [...breakdown].sort((a, b) => b.total - a.total);
+  const filteredBreakdown = breakdown.filter(item => item.total !== 0);
+
+  const sortedBreakdown = [...filteredBreakdown].sort((a, b) => b.total - a.total);
 
   const top4Categories = sortedBreakdown.slice(0, 4);
 

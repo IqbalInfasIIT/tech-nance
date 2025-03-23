@@ -1,5 +1,7 @@
 const { Op } = require('sequelize');
 const MonthlyTotal = require('../models/MonthlyTotal');
+const MonthlyTotalController = require('../controllers/monthlyTotalController');
+const monthlyTotalController = new MonthlyTotalController();
 
 class MonthlyTotalService {
   async getMonthlyTotals(startDate, endDate) {
@@ -15,38 +17,13 @@ class MonthlyTotalService {
       let results = [];
 
       if (startYear === endYear) {
-        // Same year, fetch directly using between
-        results = await MonthlyTotal.findAll({
-          where: {
-            year: startYear,
-            month: { [Op.between]: [startMonth, endMonth] }
-          },
-          order: [['year', 'ASC'], ['month', 'ASC']]
-        });
+        results = await monthlyTotalController.fetchMonthlyTotals(startYear,startMonth,endMonth)
       } else {
-        // Different years, fetch for each segment
-        const startYearResults = await MonthlyTotal.findAll({
-          where: {
-            year: startYear,
-            month: { [Op.between]: [startMonth, 12] }
-          },
-          order: [['year', 'ASC'], ['month', 'ASC']]
-        });
+        const startYearResults = await monthlyTotalController.fetchMonthlyTotals(startYear,startMonth,12)
 
-        const endYearResults = await MonthlyTotal.findAll({
-          where: {
-            year: endYear,
-            month: { [Op.between]: [1, endMonth] }
-          },
-          order: [['year', 'ASC'], ['month', 'ASC']]
-        });
+        const endYearResults = await monthlyTotalController.fetchMonthlyTotals(endYear,1,endMonth)
 
-        const middleYearsResults = await MonthlyTotal.findAll({
-          where: {
-            year: { [Op.between]: [startYear + 1, endYear - 1] }
-          },
-          order: [['year', 'ASC'], ['month', 'ASC']]
-        });
+        const middleYearsResults = await monthlyTotalController.fetchMiddleYearsResults(startYear,endYear)
 
         results = [...startYearResults, ...middleYearsResults, ...endYearResults];
       }

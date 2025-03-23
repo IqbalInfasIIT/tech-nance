@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { addSource } from '../Services/SourcesApi';
 import './AddSourceScreen.css';
+import SourceAmountInput from './SourceAmountInput';
 
 function AddSourceScreen() {
   const { type } = useParams();
@@ -9,14 +10,16 @@ function AddSourceScreen() {
   const [balance, setBalance] = useState('');
   const [isBank, setIsBank] = useState(false);
   const [bankNumber, setBankNumber] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleAddSource = async (e) => {
+    const rawBalance = balance.replace(/,/g, "");
     e.preventDefault();
     const newSource = {
       sourceType: 'Account',
       sourceName: name,
-      balance: parseFloat(balance) || 0,
+      balance: parseFloat(rawBalance) || 0,
       isBankAccount: isBank,
       bankNumber: isBank ? bankNumber : null
     };
@@ -82,12 +85,11 @@ function AddSourceScreen() {
           required
         />
         <label className='main-label'>Initial Balance: </label>
-        <input
-          type="number"
-          value={balance}
-          onChange={(e) => setBalance(e.target.value)}
-          placeholder="Initial Balance"
-          required
+        <SourceAmountInput 
+          amount={balance} 
+          setAmount={setBalance}
+          error={error}
+          setError={setError}
         />
         <button type="submit">Add {type}</button>
       </form>

@@ -17,7 +17,7 @@ function TransferForm({ formData, handleInputChange, accounts, sourceId }) {
   return (
     <div className="form-group full-width">
       <label htmlFor="destinationId">Destination:</label>
-      <select id="destinationId" name="destinationId" value={formData.destinationId} onChange={handleTransferChange} required>
+      <select id="destination_id" name="destination_id" value={formData.destinationId} onChange={handleTransferChange} required>
         <option value="">Select a Destination</option>
         {accounts.map(account => (
           String(account.source_id) !== String(sourceId) && (

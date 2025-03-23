@@ -1,5 +1,4 @@
 import api from './api';
-
 export const getTransactions = async () => {
   try {
     const response = await api.get('/transactions/get-transactions');
@@ -9,7 +8,6 @@ export const getTransactions = async () => {
     throw error;
   }
 };
-
 export const getAllTransactionsWithNames = async (startDate, endDate) => {
   try {
     const response = await api.get('/transactions/get-transactions-with-names', { params: { startDate, endDate } });
@@ -19,7 +17,6 @@ export const getAllTransactionsWithNames = async (startDate, endDate) => {
     throw error;
   }
 };
-
 export const getTransactionById = async (transactionId) => {
   try {
     const response = await api.get(`/transactions/${transactionId}`);
@@ -29,7 +26,6 @@ export const getTransactionById = async (transactionId) => {
     throw error;
   }
 };
-
 export const addTransaction = async (transaction) => {
   try {
     const response = await api.post('/transactions/add-transaction', transaction);
@@ -39,7 +35,6 @@ export const addTransaction = async (transaction) => {
     throw error;
   }
 };
-
 export const getTransactionDateRange = async () => {
   try {
     const response = await api.get('/transactions/get-date-range');
@@ -49,7 +44,6 @@ export const getTransactionDateRange = async () => {
     throw error;
   }
 };
-
 export const deleteTransaction = async (transactionId) => {
   try {
     const response = await api.delete(`/transactions/delete-id/${transactionId}`);

@@ -13,12 +13,18 @@ const BudgetsRadialBarChart = ({ totalAmount, totalTarget }) => {
 
   const data = [
     {
-      name: `Target: ${totalTarget.toLocaleString()}`,
+      name: `Target: ${new Intl.NumberFormat(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(totalTarget)}`,
       value: totalTarget,
       fill: '#f44336',
     },
     {
-      name: `Spent: ${totalAmount.toLocaleString()}`,
+      name: `Spent: ${new Intl.NumberFormat(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(totalAmount)}`,
       value: totalAmount,
       fill: '#32CD32',
     },
@@ -49,9 +55,15 @@ const BudgetsRadialBarChart = ({ totalAmount, totalTarget }) => {
             </ResponsiveContainer>
         </div>
         <div className={`chart-status ${isOverspent ? 'overspent' : 'saved'}`} >
-            {isOverspent
-                ? `Overspent by: ${Math.abs(difference).toLocaleString()}`
-                : `Saved: ${Math.abs(difference).toLocaleString()}`}
+          {isOverspent
+            ? `Overspent by: ${new Intl.NumberFormat(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }).format(Math.abs(difference))}`
+            : `Saved: ${new Intl.NumberFormat(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }).format(Math.abs(difference))}`}
         </div>
     </div>
   );

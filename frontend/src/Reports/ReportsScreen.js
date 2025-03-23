@@ -23,7 +23,6 @@ const Reports = () => {
   const [transactions, setTransactions] = useState([]);
   const [dateRange, setDateRange] = useState({ earliestDate: '', latestDate: '' });
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
-  const [loadingPredictions, setLoadingPredictions] = useState(false);
 
   useEffect(() => {
     const fetchDateRange = async () => {
@@ -51,51 +50,39 @@ const Reports = () => {
       } else {
         setMonthlyTotals(totals);
       }
-      
       const transactionsData = await getAllTransactionsWithNames(start, end);
       setTransactions(transactionsData);
-
       const [startYear, startMonth] = start.split("-").slice(0, 2);
       const [endYear, endMonth] = end.split("-").slice(0, 2);
-
       let categoryTotals;
-
       if (startYear === endYear && startMonth === endMonth) {
         categoryTotals = await getCategoryTotalsByPeriod(startYear, startMonth);
       } else {
         categoryTotals = await getAllCategoryTotals();
       }
-
       setmonthlyCategoryTotals(categoryTotals);
-
       if (categoryTotals && categoryTotals.length > 0) {
         const incomeMap = new Map();
         const expenseMap = new Map();
-
         categoryTotals.forEach((item) => {
           const { category_type, total_amount, incomeCategory, expenseCategory } = item;
           const categoryName =
             category_type === 'income'
               ? incomeCategory?.category_name
               : expenseCategory?.category_name;
-
           if (!categoryName) return;
-
           const amount = parseFloat(total_amount);
-
           if (category_type === 'income') {
             incomeMap.set(categoryName, (incomeMap.get(categoryName) || 0) + amount);
           } else if (category_type === 'expense') {
             expenseMap.set(categoryName, (expenseMap.get(categoryName) || 0) + amount);
           }
         });
-
         const incomeBreakdownArray = Array.from(incomeMap, ([category_name, total]) => ({
           category_name,
           total,
         }));
         setIncomeBreakdown(incomeBreakdownArray);
-
         const expenseBreakdownArray = Array.from(expenseMap, ([category_name, total]) => ({
           category_name,
           total,
@@ -103,24 +90,24 @@ const Reports = () => {
         setExpenseBreakdown(expenseBreakdownArray);
         console.log("income", incomeBreakdownArray)
         console.log("expense", expenseBreakdownArray)
+      } else {
+        setIncomeBreakdown([]);
+        setExpenseBreakdown([]);
       }
 
       if (totals && totals.length > 0) {
         let totalIncomeCalc = 0;
         let totalExpenseCalc = 0;
-  
         totals.forEach(monthTotal => {
           totalIncomeCalc += parseFloat(monthTotal.total_income);
           totalExpenseCalc += parseFloat(monthTotal.total_expenses);
         });
-  
         setTotalIncome(totalIncomeCalc);
         setTotalExpense(totalExpenseCalc);
       } else {
         setTotalIncome(0);
         setTotalExpense(0);
       }
-      
     } catch (error) {
       console.error("Error fetching report data:", error);
     }
@@ -134,10 +121,10 @@ const Reports = () => {
       setTransactions((prevTransactions) =>
           prevTransactions.filter((transaction) => transaction.transaction_id !== transactionId)
       );
-  } catch (error) {
+    } catch (error) {
       console.error('Error deleting transaction:', error);
-  }
-};
+    }
+  };
 
   const netBalance = totalIncome - totalExpense;
   const balanceMessage = netBalance > 0 ? 'Saved:' : netBalance < 0 ? 'Overspent by:' : 'Balanced';

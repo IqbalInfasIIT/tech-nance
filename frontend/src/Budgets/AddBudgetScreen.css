@@ -124,3 +124,17 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.abs-textfield-cell {
+  border: 0.15rem dashed #000000;
+  background-color: #cecece;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  cursor: text;
+  box-sizing: border-box;
+}
+
+.abs-textfield-cell:hover {
+  background-color: #f9f9f9;
+  border-color: #999;
+}

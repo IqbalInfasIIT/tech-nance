@@ -12,11 +12,11 @@ const initialFormData = {
   number: '',
   description: '',
   amount: '',
-  sourceId: '',
-  sourceType: '',
-  destinationId: '',
-  destinationType: '',
-  paymentMethod: ''
+  source_id: '',
+  source_type: '',
+  destination_id: '',
+  destination_type: '',
+  payment_method: ''
 };
 
 function TransactionScreen() {
@@ -69,20 +69,20 @@ function TransactionScreen() {
   const handleTypeClick = (type) => {
     setFormData(initialFormData);
     setSelectedType(type);
-    let paymentMethod = 'Cash'; 
+    let payment_method = 'Cash'; 
     
     if (source) {
       if (source.is_bank_account) {
-        paymentMethod = 'Transfer';
+        payment_method = 'Transfer';
       } else {
-        paymentMethod = 'Cash';
+        payment_method = 'Cash';
       }
     }
   
     setFormData((prevData) => ({
       ...prevData,
       type: type,
-      paymentMethod: paymentMethod
+      payment_method: payment_method
     }));
   };  
   

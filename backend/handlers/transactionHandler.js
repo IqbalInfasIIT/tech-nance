@@ -15,7 +15,6 @@ exports.addTransaction = async (req, res) => {
   try {
     const transaction = req.body;
     await transactionService.addTransaction(transaction);
-    console.log(transaction);
     res.status(201).json({ message: 'Transaction added successfully!' });
   } catch (err) {
     console.error('Error adding transaction:', err);

@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { getMainCategories } from '../Services/CategoryApi';
 import { addBudget, getPredictions } from '../Services/BudgetApi';
 import BudgetedAmountInput from './BudgetedAmountInput';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './AddBudgetScreen.css';
 
 const AddBudgetsScreen = () => {
   const location = useLocation();
   const budgetNames = location.state?.budgetNames || [];
-
   const [budgetName, setBudgetName] = useState('');
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -19,6 +18,8 @@ const AddBudgetsScreen = () => {
   const [editingIndex, setEditingIndex] = useState(null);
   const [editingAmount, setEditingAmount] = useState('');
   const [loadingPredictions, setLoadingPredictions] = useState(false);
+  
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -29,10 +30,8 @@ const AddBudgetsScreen = () => {
         console.error('Error fetching categories:', error);
       }
     };
-
     fetchCategories();
   }, []);
-
   const filteredCategories = categories.filter(
     (category) => !budgetList.some((item) => item.category_id === category.category_id)
   );
@@ -97,6 +96,7 @@ const AddBudgetsScreen = () => {
         setSelectedCategory(null);
         setAmount('');
         setBudgetList([]);
+        navigate('/budgets');
       } else {
         alert('Please provide a valid budget name and add categories');
       }
@@ -203,6 +203,7 @@ const AddBudgetsScreen = () => {
               <tr key={index}>
                 <td>{item.category_name}</td>
                 <td
+                  class="abs-textfield-cell"
                   onClick={() => handleEditAmount(index, item.amount)}
                   style={{ cursor: 'pointer', position: 'relative' }}
                 >

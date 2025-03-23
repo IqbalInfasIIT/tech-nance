@@ -38,9 +38,6 @@ function CategoryPopup({ open, handleClose, type, categories, onSelect, onDelete
     <Popup open={open} closeOnDocumentClick onClose={handleClose}>
       <div className="popup-data">
         <ul className="category-list">
-        {showDelete && (
-          <li>Current Number of Main Categories: {count} / 10</li>
-        )}
           {categories.map((mainCat) => (
             <li key={mainCat.category_id} className="category-item main-category">
               <div className="main-category-header">

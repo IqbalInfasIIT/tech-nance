@@ -29,3 +29,4 @@ ExpenseCategory.belongsTo(ExpenseCategory, { as: 'parentCategory', foreignKey: '
 ExpenseCategory.hasMany(ExpenseCategory, { as: 'subcategories', foreignKey: 'parent_category_id' });
 
 module.exports = ExpenseCategory;
+

@@ -9,12 +9,17 @@ const BudgetsCustomPieChart = ({ data, labels }) => {
     value: parseFloat(data[index]),
   }));
 
-  const generateColors = (length) =>
-    Array.from({ length }, () =>
-      `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`
-    );
-
-  const dynamicColors = generateColors(chartData.length);
+  const generateDarkerColors = (length) =>
+    Array.from({ length }, () => {
+      const randomValue = () => Math.floor(Math.random() * 200);
+      const r = randomValue().toString(16).padStart(2, '0');
+      const g = randomValue().toString(16).padStart(2, '0');
+      const b = randomValue().toString(16).padStart(2, '0');
+      return `#${r}${g}${b}`;
+    });
+  
+  const dynamicColors = generateDarkerColors(chartData.length);
+  
 
   if (!chartData.length || chartData.some(item => isNaN(item.value))) {
     console.error('Invalid chart data:', chartData);
