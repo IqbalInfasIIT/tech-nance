@@ -12,8 +12,16 @@ def predict():
     data = request.get_json()
     category_monthly_totals = data.get('categoryMonthlyTotals', [])
     predictions = []
-
     for category_data in category_monthly_totals:
+
+        if len(category_data) < 5:
+            category_id = category_data[0].get('category_id', None)
+            predictions.append({
+                'category_id': category_id,
+                'predicted_amount': 'Insufficient data (needs at least 5 months)'
+                })
+            continue
+
         if not category_data:
             continue
 
@@ -39,7 +47,7 @@ def predict():
         df.set_index('year_month', inplace=True)
         try:
             time_series = df['total_amount']
-            model = auto_arima(time_series, seasonal=False, stepwise=True, suppress_warnings=True)
+            model = auto_arima(time_series)
             forecast = model.predict(n_periods=1)[0]
             category_id = category_data[0]['category_id']
             predictions.append({
