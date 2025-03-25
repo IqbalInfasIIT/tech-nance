@@ -32,7 +32,20 @@ class BudgetPredictionController {
 
       const categoryMonthlyTotals = await Promise.all(categoryMonthlyTotalsPromises);
 
-      const filteredCategoryMonthlyTotals = categoryMonthlyTotals.filter(data => data.length > 0);
+      console.log('this is totals')
+      console.log(categoryMonthlyTotals)
+
+      const filteredCategoryMonthlyTotals = categoryMonthlyTotals.filter(data => data.length > 0).map(categoryData => {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const currentYearMonth = `${currentYear}${currentMonth}`;
+
+        return categoryData.filter(item => item.year_month < currentYearMonth);
+      }).filter(data => data.length > 0);
+
+      console.log('this is totals')
+      console.log(filteredCategoryMonthlyTotals)
 
       if (filteredCategoryMonthlyTotals.length === 0) {
         throw new Error("No valid historical expense data found for predictions.");

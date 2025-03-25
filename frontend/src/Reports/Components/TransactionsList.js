@@ -3,6 +3,22 @@ import './TransactionsList.css';
 
 const TransactionsList = ({ transactions, handleDeleteTransaction }) => {
 
+    if ((!transactions || transactions.length === 0)) {
+        return (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height:'100%',
+              width: '100%'
+            }}
+          >
+            No Data
+          </div>
+        );
+      }
+
     return (
         <table className='t-table'>
             <thead>

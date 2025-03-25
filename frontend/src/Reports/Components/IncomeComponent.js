@@ -6,6 +6,13 @@ import './IncExpComponent.css';
 const IncomeComponent = ({ totalIncome, breakdown = [] }) => {
   const [showPopup, setShowPopup] = useState(false);
 
+  if ((!breakdown || breakdown.length === 0) && (!totalIncome || totalIncome === 0)) {
+    return 
+    <div>
+
+    </div>;
+  }
+
   const filteredBreakdown = breakdown.filter(item => item.total !== 0);
 
   const sortedBreakdown = [...filteredBreakdown].sort((a, b) => b.total - a.total);

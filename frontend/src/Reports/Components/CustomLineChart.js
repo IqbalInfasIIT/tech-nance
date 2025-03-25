@@ -19,6 +19,22 @@ const CustomLineChart = ({ fullRange, currentMonth }) => {
     };
   });
 
+  if ((!formattedData || formattedData.length === 0)) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height:'90vh',
+          width: '100%'
+        }}
+      >
+        No Data
+      </div>
+    );
+  }
+  
   const CustomDot = (props) => {
     if (props.payload.isActive) {
       return <Dot {...props} r={8} />;
