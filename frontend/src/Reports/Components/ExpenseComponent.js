@@ -7,10 +7,7 @@ const ExpenseComponent = ({ totalExpense, breakdown = [] }) => {
   const [showPopup, setShowPopup] = useState(false);
 
   if ((!breakdown || breakdown.length === 0) && (!totalExpense || totalExpense === 0)) {
-    return 
-    <div className="IncExp-component">
-
-    </div>;
+    return <div className="IncExp-component">No Data</div>;
   }
 
   const filteredBreakdown = breakdown.filter(item => item.total !== 0);
