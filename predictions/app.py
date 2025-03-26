@@ -21,10 +21,8 @@ def predict():
                 'predicted_amount': 'Insufficient data (needs at least 5 months)'
                 })
             continue
-
         if not category_data:
             continue
-
         if len(category_data) == 1:
             category_id = category_data[0].get('category_id', None)
             predictions.append({
@@ -32,7 +30,6 @@ def predict():
                 'predicted_amount': 'N/A'
             })
             continue
-
         category_data = [item for item in category_data if item['total_amount'] != 0]
         if not category_data:
             predictions.append({
@@ -40,7 +37,6 @@ def predict():
                 'predicted_amount': 'No data after zero removal'
             })
             continue
-        
         df = pd.DataFrame(category_data)
         df['year_month'] = pd.to_datetime(df['year_month'], format='%Y%m')
         df = df.sort_values(by='year_month')

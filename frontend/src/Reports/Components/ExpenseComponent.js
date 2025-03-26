@@ -8,7 +8,7 @@ const ExpenseComponent = ({ totalExpense, breakdown = [] }) => {
 
   if ((!breakdown || breakdown.length === 0) && (!totalExpense || totalExpense === 0)) {
     return 
-    <div>
+    <div className="IncExp-component">
 
     </div>;
   }
