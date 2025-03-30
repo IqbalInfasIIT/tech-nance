@@ -7,47 +7,34 @@ warnings.simplefilter(action='ignore', category=UserWarning)
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 app = Flask(__name__)
+
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json()
     category_monthly_totals = data.get('categoryMonthlyTotals', [])
     predictions = []
-    for category_data in category_monthly_totals:
 
+    for category_data in category_monthly_totals:
         if len(category_data) < 5:
-            category_id = category_data[0].get('category_id', None)
             predictions.append({
-                'category_id': category_id,
+                'category_id': category_data[0].get('category_id', None) if category_data else None,
                 'predicted_amount': 'Insufficient data (needs at least 5 months)'
-                })
-            continue
-        if not category_data:
-            continue
-        if len(category_data) == 1:
-            category_id = category_data[0].get('category_id', None)
-            predictions.append({
-                'category_id': category_id,
-                'predicted_amount': 'N/A'
             })
             continue
-        category_data = [item for item in category_data if item['total_amount'] != 0]
-        if not category_data:
+        df = pd.DataFrame(category_data)
+        df = df[df['total_amount'] != 0]
+        if df.empty:
             predictions.append({
                 'category_id': category_data[0]['category_id'],
                 'predicted_amount': 'No data after zero removal'
             })
             continue
-        df = pd.DataFrame(category_data)
         df['year_month'] = pd.to_datetime(df['year_month'], format='%Y%m')
-        df = df.sort_values(by='year_month')
-        df.set_index('year_month', inplace=True)
+        df = df.sort_values(by='year_month').set_index('year_month')
         try:
-            time_series = df['total_amount']
-            model = auto_arima(time_series)
-            forecast = model.predict(n_periods=1)[0]
-            category_id = category_data[0]['category_id']
+            forecast = auto_arima(df['total_amount']).predict(n_periods=1)[0]
             predictions.append({
-                'category_id': category_id,
+                'category_id': category_data[0]['category_id'],
                 'predicted_amount': round(forecast, 2)
             })
         except Exception as e:

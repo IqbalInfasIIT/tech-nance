@@ -37,17 +37,14 @@ function BudgetsScreen() {
     try {
       const totals = await getCategoryTotalsByPeriod(year, month);
       const expenseCategories = totals.filter(category => category.category_type === "expense");
-      const mappedCategories = expenseCategories.map(category => {
-        const matchingCategory = budget.categories.find(
-          bCategory => bCategory.category_id === category.category_id
-        );
-        return {
-          ...category,
-          targetAmount: matchingCategory ? parseFloat(matchingCategory.amount) : 0
-        };
-      });
+      const mappedCategories = budget.categories
+        .map(bCategory => {
+          const matchingCategory = expenseCategories.find(category => category.category_id === bCategory.category_id);
+          return matchingCategory ? { ...matchingCategory, targetAmount: parseFloat(bCategory.amount) } : null;
+        })
+        .filter(category => category !== null && category.targetAmount > 0);
       setCategoryTotals(mappedCategories);
-      console.log(mappedCategories)
+      console.log(mappedCategories);
     } catch (error) {
       console.error('Error fetching category totals:', error);
     }

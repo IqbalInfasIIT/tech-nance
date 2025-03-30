@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getSources, deleteSource, addSource } from '../Services/SourcesApi';
+import { getSources, deleteSource } from '../Services/SourcesApi';
 import './SourcesScreen.css';
 
 function SourcesScreen() {

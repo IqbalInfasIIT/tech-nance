@@ -116,17 +116,6 @@ function TransactionScreen() {
     }
   };
 
-  const handleAddCategory = async (category, type) => {
-    let typeALT = type === 'income_categories' ? 'Income' : 'Expense';
-    try {
-      await addCategory(category, type);
-      alert(`${typeALT} category added successfully.`);
-    } catch (error) {
-      console.error(`Error adding ${typeALT} category:`, error);
-      alert(`Error adding ${typeALT} category. Please try again.`);
-    }
-  };
-
   const handleDeleteCategory = async (categoryId, categoryType) => {
     try {
       await deleteCategory(categoryId, categoryType);

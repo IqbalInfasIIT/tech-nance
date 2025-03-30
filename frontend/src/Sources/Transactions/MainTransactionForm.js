@@ -6,7 +6,7 @@ import RefundForm from './Forms/RefundForm';
 import AmountInput from './Components/AmountInputView';
 
 function MainTransactionForm({ 
-  selectedType, formData, handleInputChange, handleFormSubmit, incomeCategories, expenseCategories, accounts, addCategory, deleteCategory, 
+  selectedType, formData, handleInputChange, handleFormSubmit, incomeCategories, expenseCategories, accounts, deleteCategory, 
   incomeMainCategoryCount, expenseMainCategoryCount, sourceId, sourceBalance
 }) {
   const [amount, setAmount] = useState('');
@@ -30,7 +30,6 @@ function MainTransactionForm({
   if (!selectedType) {
     return null;
   }
-
   return (
     <div className="transactions-container">
       <form className="transaction-form" onSubmit={handleFormSubmit}>
@@ -59,7 +58,6 @@ function MainTransactionForm({
             formData={formData} 
             handleInputChange={handleInputChange} 
             incomeCategories={incomeCategories} 
-            addCategory={addCategory} 
             deleteCategory={deleteCategory} 
             incomeMainCategoryCount={incomeMainCategoryCount}
             sourceId={sourceId}
@@ -70,7 +68,6 @@ function MainTransactionForm({
             formData={formData} 
             handleInputChange={handleInputChange} 
             expenseCategories={expenseCategories} 
-            addCategory={addCategory} 
             deleteCategory={deleteCategory} 
             expenseMainCategoryCount={expenseMainCategoryCount}
             sourceId={sourceId}
@@ -100,5 +97,4 @@ function MainTransactionForm({
     </div>
   );
 }
-
 export default MainTransactionForm;
